@@ -1,0 +1,11 @@
+.vscode
+.env
+node_modules/
+dist/
+build/
+*/node_modules/
+*/dist/
+*/build/
+*.log
+*.env
+*/3000;
