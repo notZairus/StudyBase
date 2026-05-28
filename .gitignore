@@ -6,6 +6,6 @@ build/
 */node_modules/
 */dist/
 */build/
-*.log
-*.env
+*/.log
+*/.env
 */3000;
