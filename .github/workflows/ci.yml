@@ -63,6 +63,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            \. "$HOME/.nvm/nvm.sh"
             cd /var/www/StudyBase
 
             git pull origin main
