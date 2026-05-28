@@ -1,6 +1,6 @@
 
 
-name: My first CI pipeline
+name: My first CI/CD pipeline
 
 on:
   push:
