@@ -1,9 +1,11 @@
 import "./index.css";
+import { lazy } from "react";
+import UnauthenticatedRoute from "./components/UnauthenticatedRoute";
 import { Routes, Route } from "react-router";
 import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import { lazy } from "react";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 
@@ -12,10 +14,32 @@ function App() {
     <div className="min-h-screen bg-[#faf8f3] text-slate-900">
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/dashboard" element={<Dashboard />} />
 
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/login"
+          element={
+            <UnauthenticatedRoute>
+              <Login />
+            </UnauthenticatedRoute>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <UnauthenticatedRoute>
+              <Register />
+            </UnauthenticatedRoute>
+          }
+        />
 
         <Route
           path="*"

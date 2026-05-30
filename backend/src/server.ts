@@ -4,8 +4,12 @@ dotenv.config();
 import express from "express";
 import cors from "cors";
 import session from "express-session";
+import { clerkMiddleware } from "@clerk/express";
+import { rateLimit } from "express-rate-limit";
 
 const app = express();
+
+app.use(clerkMiddleware());
 
 app.use(express.json());
 app.use(cors());
@@ -19,6 +23,14 @@ app.use(
       secure: process.env.NODE_ENV === "production",
       maxAge: 1000 * 60 * 60 * 24,
     },
+  }),
+);
+app.use(
+  rateLimit({
+    windowMs: 1000 * 60 * 15,
+    max: 100,
+    message: "Too many requests, please try again later.",
+    statusCode: 429,
   }),
 );
 

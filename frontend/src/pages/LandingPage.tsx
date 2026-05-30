@@ -7,401 +7,385 @@ import {
   Search,
   Sparkles,
   Target,
+  Menu,
+  X,
 } from "lucide-react";
+import { useState } from "react";
 import { Show, UserButton } from "@clerk/react";
-import { Button } from "../components/ui/button";
+
 import { Link } from "react-router";
+
+import { Button } from "../components/ui/button";
+import { cn } from "../lib/utils";
+
+const navItems = [
+  { label: "Features", href: "#features" },
+  { label: "How it works", href: "#how-it-works" },
+  { label: "Pricing", href: "#pricing" },
+];
 
 const features = [
   {
     icon: FileText,
-    title: "Lecture Notes",
+    title: "Lecture notes",
     description:
-      "Upload PDFs or paste text and let AI do the heavy lifting. Get clean summaries, organized by subject and week, searchable in seconds.",
-    tags: ["PDF import", "AI summarize", "Full-text search"],
+      "Upload PDFs or paste text, then turn dense class material into clean summaries you can scan in seconds.",
   },
   {
     icon: CalendarDays,
-    title: "Student Planner",
+    title: "Student planner",
     description:
-      "Add assignments, exams, and deadlines. Link tasks to subjects, track status, and switch between calendar and list view.",
-    tags: ["Calendar", "Status tracking", "Link to subject"],
+      "Keep assignments, exams, and reminders in one calm view so deadlines stay visible without feeling noisy.",
   },
   {
     icon: Check,
-    title: "Stay on top of deadlines",
+    title: "Track progress",
     description:
-      "Track every assignment and exam with a clear status line, visual calendar views, and daily reminders that keep the week calm.",
-    tags: ["Todo", "In progress", "Deadline alerts"],
+      "See what is done, what is next, and what still needs work with a layout that stays readable on every screen.",
   },
   {
     icon: BookOpenText,
-    title: "Everything you need",
+    title: "Study in context",
     description:
-      "Notes, tasks, and summaries live together, so you can move from reading to planning without jumping between tabs.",
-    tags: ["One dashboard", "Study flow", "Fast access"],
+      "Notes, summaries, and tasks sit beside each other so you can move from reading to planning without switching tabs.",
   },
 ];
 
 const steps = [
   {
     number: "01",
-    title: "Upload your notes",
-    text: "Drag in a PDF or paste your lecture text. Organize by subject and week as you go.",
+    title: "Bring in your notes",
+    text: "Drop in lecture files or paste in class content to start organizing the material by subject and week.",
   },
   {
     number: "02",
-    title: "Get AI summaries",
-    text: "StudyBase reads and condenses your notes into sharp, review-ready summaries instantly.",
+    title: "Let AI condense the page",
+    text: "Get crisp summaries that pull out the important concepts, terminology, and examples without the fluff.",
   },
   {
     number: "03",
-    title: "Plan and conquer",
-    text: "Add deadlines to the planner, link them to subjects, and track progress all the way to done.",
+    title: "Turn insight into action",
+    text: "Plan tasks, set deadlines, and keep your next study block visible right where you need it.",
   },
 ];
 
 function LandingPage() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   return (
-    <div className="min-h-screen overflow-x-hidden bg-[#faf8f3] text-slate-900">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-114 bg-[radial-gradient(circle_at_top_left,_rgba(99,102,241,0.12),_transparent_34%),radial-gradient(circle_at_top_right,_rgba(244,114,182,0.10),_transparent_24%),linear-gradient(to_bottom,_rgba(255,255,255,0.92),_rgba(250,248,243,0))]" />
-      <div className="pointer-events-none absolute left-0 top-0 h-112 w-1/2 bg-[radial-gradient(circle_at_10%_10%,_rgba(99,102,241,0.06),_transparent_42%)]" />
-
-      <header className="relative z-10 border-b border-slate-200/70 bg-white/70 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+    <div className="min-h-screen overflow-x-hidden bg-background text-foreground">
+      <header
+        className={cn(
+          "relative z-10 border-b border-border/80 bg-background/80 backdrop-blur",
+        )}
+      >
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
           <a href="#home" className="flex items-center gap-3">
-            <span className="flex size-7 items-center justify-center rounded-lg bg-indigo-600 text-sm font-semibold text-white shadow-sm shadow-indigo-500/20">
-              S
-            </span>
-            <span className="font-serif text-lg tracking-tight text-slate-950">
+            <span className="font-heading text-2xl tracking-tight text-foreground">
               StudyBase
             </span>
           </a>
 
-          <nav className="hidden items-center gap-8 text-sm text-slate-600 md:flex">
-            <a
-              className="transition-colors hover:text-slate-950"
-              href="#features"
-            >
-              Features
-            </a>
-            <a
-              className="transition-colors hover:text-slate-950"
-              href="#how-it-works"
-            >
-              How it works
-            </a>
-            <a
-              className="transition-colors hover:text-slate-950"
-              href="#pricing"
-            >
-              Pricing
-            </a>
+          <nav className="hidden items-center gap-2 text-sm text-muted-foreground md:flex">
+            {navItems.map((item) => (
+              <a
+                key={item.href}
+                className="rounded-full px-3 py-2 transition-colors hover:bg-accent hover:text-accent-foreground"
+                href={item.href}
+              >
+                {item.label}
+              </a>
+            ))}
           </nav>
 
-          <Show when="signed-out">
-            <div>
-              <Button size="lg">
-                <Link to="/login">Sign in</Link>
-              </Button>
-            </div>
-          </Show>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              aria-label="Open menu"
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-header-menu"
+              onClick={() => setMobileMenuOpen((value) => !value)}
+              className="inline-flex size-9 items-center justify-center rounded-full border border-border bg-background text-foreground transition hover:bg-accent hover:text-accent-foreground md:hidden"
+            >
+              {mobileMenuOpen ? (
+                <X className="size-4" />
+              ) : (
+                <Menu className="size-4" />
+              )}
+            </button>
 
-          <Show when="signed-in">
-            <UserButton />
-          </Show>
+            <Show when="signed-out">
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  asChild
+                  className="hidden sm:inline-flex"
+                >
+                  <Link to="/login">Sign in</Link>
+                </Button>
+                <Button size="lg" asChild>
+                  <Link to="/register">
+                    <Sparkles className="size-4" />
+                    Get started
+                  </Link>
+                </Button>
+              </div>
+            </Show>
+
+            <Show when="signed-in">
+              <div className="flex items-center gap-3">
+                <Button variant="outline" size="lg" asChild>
+                  <Link to="/dashboard">Dashboard</Link>
+                </Button>
+                <UserButton />
+              </div>
+            </Show>
+          </div>
+        </div>
+
+        <div
+          id="mobile-header-menu"
+          className={cn(
+            "border-t border-border/80 bg-background/95 px-4 py-4 shadow-sm backdrop-blur md:hidden",
+            mobileMenuOpen ? "block" : "hidden",
+          )}
+        >
+          <nav className="flex flex-col gap-1 text-sm text-muted-foreground">
+            {navItems.map((item) => (
+              <a
+                key={item.href}
+                className="rounded-xl px-3 py-2 transition-colors hover:bg-accent hover:text-accent-foreground"
+                href={item.href}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {item.label}
+              </a>
+            ))}
+          </nav>
+
+          <div className="mt-4 flex flex-col gap-2">
+            <Show when="signed-out">
+              <Button variant="outline" size="lg" asChild>
+                <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
+                  Sign in
+                </Link>
+              </Button>
+              <Button size="lg" asChild>
+                <Link to="/register" onClick={() => setMobileMenuOpen(false)}>
+                  <Sparkles className="size-4" />
+                  Get started
+                </Link>
+              </Button>
+            </Show>
+
+            <Show when="signed-in">
+              <Button variant="outline" size="lg" asChild>
+                <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)}>
+                  Dashboard
+                </Link>
+              </Button>
+            </Show>
+          </div>
         </div>
       </header>
 
-      <main className="relative z-10">
+      <main>
         <section
           id="home"
-          className="mx-auto grid max-w-6xl gap-14 px-4 pb-20 pt-12 sm:px-6 lg:grid-cols-[1.02fr_0.98fr] lg:items-center lg:px-8 lg:pb-24 lg:pt-16"
+          className="mx-auto grid max-w-7xl gap-10 px-4 pb-16 pt-12 sm:px-6 lg:grid-cols-[1.02fr_0.98fr] lg:items-center lg:px-8 lg:pb-24 lg:pt-16"
         >
-          <div className="max-w-xl">
-            <div className="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.22em] text-indigo-700">
-              <Sparkles className="size-3.5" />
-              AI-powered student productivity
-            </div>
-
-            <h1 className="mt-6 font-serif text-6xl leading-[0.92] tracking-tight text-slate-950 sm:text-7xl lg:text-[4.8rem]">
-              Study <span className="italic text-indigo-600">smarter,</span> not
-              harder.
+          <div className="max-w-2xl">
+            <h1 className="font-heading text-5xl tracking-tight text-foreground sm:text-6xl lg:text-7xl lg:leading-[0.92]">
+              Study smarter with one place for notes, tasks, and deadlines.
             </h1>
 
-            <p className="mt-6 max-w-lg text-lg leading-8 text-slate-600">
-              Turn lecture notes into clear summaries and intelligent task
-              planning so you can actually understand your coursework - not just
-              survive it.
+            <p className="mt-6 max-w-xl text-lg leading-8 text-muted-foreground">
+              StudyBase keeps your lectures, summaries, and planner together in
+              a calm interface so it is easier to review, stay organized, and
+              actually finish the week on time.
             </p>
 
-            <div className="mt-8 flex flex-wrap items-center gap-4">
-              <a
-                href="#cta"
-                className="inline-flex items-center gap-2 rounded-full bg-indigo-600 px-6 py-3.5 text-base font-semibold text-white shadow-[0_14px_28px_rgba(79,70,229,0.24)] transition hover:-translate-y-0.5 hover:bg-indigo-500"
-              >
-                Start for free
-                <ArrowRight className="size-4" />
-              </a>
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <Button size="lg" asChild>
+                <a href="#pricing">
+                  Start for free
+                  <ArrowRight className="size-4" />
+                </a>
+              </Button>
 
-              <a
-                href="#how-it-works"
-                className="inline-flex items-center gap-2 text-sm font-medium text-slate-700 transition hover:text-slate-950"
-              >
-                See how it works
-                <span className="inline-block h-px w-10 bg-slate-300" />
-              </a>
+              <Button variant="outline" size="lg" asChild>
+                <a href="#features">Explore features</a>
+              </Button>
             </div>
 
-            <div className="mt-10 flex items-center gap-3 text-sm text-slate-600">
-              <div className="flex -space-x-2">
-                <span className="grid size-7 place-items-center rounded-full bg-indigo-600 text-[10px] font-semibold text-white ring-2 ring-[#faf8f3]">
-                  AK
-                </span>
-                <span className="grid size-7 place-items-center rounded-full bg-emerald-500 text-[10px] font-semibold text-white ring-2 ring-[#faf8f3]">
-                  BT
-                </span>
-                <span className="grid size-7 place-items-center rounded-full bg-amber-500 text-[10px] font-semibold text-white ring-2 ring-[#faf8f3]">
-                  MC
-                </span>
-                <span className="grid size-7 place-items-center rounded-full bg-rose-500 text-[10px] font-semibold text-white ring-2 ring-[#faf8f3]">
-                  JR
-                </span>
+            <div className="mt-8 flex flex-wrap gap-3 text-sm text-muted-foreground">
+              <div className="rounded-full border border-border bg-card px-4 py-2 shadow-sm">
+                Built for quick review
               </div>
-              <p>
-                Trusted by{" "}
-                <span className="font-semibold text-slate-900">2,000+</span>{" "}
-                students worldwide
-              </p>
+              <div className="rounded-full border border-border bg-card px-4 py-2 shadow-sm">
+                Notes and tasks together
+              </div>
+              <div className="rounded-full border border-border bg-card px-4 py-2 shadow-sm">
+                Mobile-friendly workflow
+              </div>
             </div>
           </div>
 
-          <div className="relative mx-auto h-112 w-full max-w-124 sm:h-128">
-            <div className="absolute left-0 top-10 h-80 w-[18rem] rounded-[1.6rem] border border-slate-200/80 bg-white/90 p-5 shadow-[0_24px_60px_rgba(15,23,42,0.08)] backdrop-blur-sm sm:left-8 sm:top-8 sm:h-96 sm:w-[20rem]">
-              <div className="flex items-center justify-between">
-                <div className="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-indigo-700">
-                  <BookOpenText className="size-3" />
-                  Lecture notes
-                </div>
-                <span className="text-sm font-medium text-slate-500">
-                  Intro to learning
-                </span>
-              </div>
-
-              <div className="mt-5 space-y-4">
-                <div className="rounded-2xl bg-indigo-50 p-4 ring-1 ring-indigo-100">
-                  <p className="text-sm font-semibold text-indigo-700">
-                    AI summary
+          <div className="relative">
+            <div className="rounded-3xl border border-border bg-card p-5 shadow-sm">
+              <div className="flex items-center justify-between gap-4 border-b border-border pb-4">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+                    Today&apos;s focus
                   </p>
-                  <p className="mt-2 text-sm leading-6 text-slate-600">
-                    Covers supervised vs unsupervised learning, gradient
-                    descent, optimization, and bias-variance tradeoff.
+                  <p className="mt-2 font-heading text-2xl tracking-tight">
+                    Keep your study plan visible.
                   </p>
                 </div>
-
-                <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-                  <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-                    <Search className="size-3.5 text-slate-400" />
-                    Search notes
-                  </div>
-                  <div className="mt-3 inline-flex rounded-lg bg-amber-50 px-3 py-2 text-sm text-slate-700">
-                    "gradient descent"
-                  </div>
-                  <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1.5 text-xs font-semibold text-emerald-700">
-                    <Target className="size-3.5" />
-                    Found in 4 notes
-                  </div>
+                <div className="flex size-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                  <Sparkles className="size-5" />
                 </div>
               </div>
-            </div>
 
-            <div className="absolute right-0 top-20 h-40 w-68 rounded-[1.3rem] border border-slate-200/70 bg-white p-4 shadow-[0_18px_46px_rgba(15,23,42,0.10)]">
-              <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em] text-slate-500">
-                <CalendarDays className="size-3.5 text-indigo-500" />
-                Upcoming
-              </div>
-              <ul className="mt-3 space-y-3 text-sm text-slate-700">
-                <li className="flex items-center justify-between gap-3">
-                  <span className="flex items-center gap-2">
-                    <span className="size-4 rounded-sm bg-indigo-600 text-center text-[10px] leading-4 text-white">
-                      ✓
-                    </span>
-                    Read Ch. 4
-                  </span>
-                </li>
-                <li className="flex items-center justify-between gap-3">
-                  <span className="flex items-center gap-2">
-                    <span className="size-4 rounded-sm border border-indigo-500/40" />
-                    Stats problem set
-                  </span>
-                  <span className="text-[11px] font-semibold text-orange-500">
-                    Tomorrow
-                  </span>
-                </li>
-                <li className="flex items-center justify-between gap-3">
-                  <span className="flex items-center gap-2">
-                    <span className="size-4 rounded-sm border border-indigo-500/40" />
-                    Midterm prep
-                  </span>
-                  <span className="text-[11px] font-semibold text-orange-500">
-                    Fri
-                  </span>
-                </li>
-              </ul>
-            </div>
-
-            <div className="absolute bottom-10 left-0 w-60 rounded-[1.25rem] border border-slate-200/70 bg-white p-4 shadow-[0_18px_46px_rgba(15,23,42,0.10)] sm:left-5">
-              <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
-                <Search className="size-3.5 text-sky-500" />
-                Search notes
-              </div>
-              <div className="mt-3 rounded-xl bg-amber-50 px-3 py-2 text-sm text-slate-700">
-                "gradient descent"
-              </div>
-              <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1.5 text-xs font-semibold text-emerald-700">
-                <Target className="size-3.5" />
-                Found in 4 notes
-              </div>
-            </div>
-
-            <div className="absolute left-20 top-0 hidden h-10 w-20 rounded-full bg-indigo-100/70 blur-2xl sm:block" />
-            <div className="absolute right-8 bottom-0 hidden h-12 w-28 rounded-full bg-fuchsia-100/70 blur-2xl sm:block" />
-          </div>
-        </section>
-
-        <section
-          id="features"
-          className="mx-auto max-w-6xl px-4 py-24 sm:px-6 lg:px-8"
-        >
-          <div className="max-w-3xl">
-            <p className="text-xs font-bold uppercase tracking-[0.28em] text-indigo-600">
-              Everything you need
-            </p>
-            <h2 className="mt-4 font-serif text-4xl tracking-tight text-slate-950 sm:text-5xl">
-              Two modules. One place.
-            </h2>
-            <p className="mt-4 text-lg leading-8 text-slate-600">
-              Everything you need to turn raw lectures into structured knowledge
-              and clear deadlines into achievable goals.
-            </p>
-          </div>
-
-          <div className="mt-12 grid gap-5 md:grid-cols-2">
-            {features.slice(0, 2).map((feature) => {
-              const Icon = feature.icon;
-              return (
-                <article
-                  key={feature.title}
-                  className="rounded-[1.6rem] border border-slate-200/90 bg-white p-6 shadow-[0_16px_40px_rgba(15,23,42,0.04)]"
-                >
-                  <div className="flex size-12 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600 ring-1 ring-indigo-100">
-                    <Icon className="size-5" />
-                  </div>
-                  <h3 className="mt-5 font-serif text-2xl text-slate-950">
-                    {feature.title}
-                  </h3>
-                  <p className="mt-3 max-w-sm text-sm leading-7 text-slate-600">
-                    {feature.description}
-                  </p>
-                  <div className="mt-5 flex flex-wrap gap-2">
-                    {feature.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-
-          <div className="mt-5 grid gap-5 lg:grid-cols-[1.1fr_0.9fr]">
-            <article className="rounded-[1.6rem] border border-slate-200/90 bg-white p-6 shadow-[0_16px_40px_rgba(15,23,42,0.04)]">
-              <div className="flex size-12 items-center justify-center rounded-2xl bg-amber-50 text-amber-600 ring-1 ring-amber-100">
-                <Check className="size-5" />
-              </div>
-              <h3 className="mt-5 font-serif text-2xl text-slate-950">
-                Stay on top of deadlines
-              </h3>
-              <p className="mt-3 max-w-xl text-sm leading-7 text-slate-600">
-                Track every assignment and exam with a clear status line, visual
-                calendar views, and daily reminders that keep the week calm.
-              </p>
-
-              <div className="mt-5 flex flex-wrap gap-2">
-                <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
-                  Todo
-                </span>
-                <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
-                  In progress
-                </span>
-                <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
-                  Deadline alerts
-                </span>
-              </div>
-            </article>
-
-            <article className="rounded-[1.6rem] border border-slate-200/90 bg-[#f8f4ea] p-5 shadow-[0_16px_40px_rgba(15,23,42,0.04)]">
-              <div className="space-y-3 rounded-[1.2rem] bg-white p-4 shadow-sm">
+              <div className="mt-5 grid gap-4 sm:grid-cols-3">
                 {[
-                  ["Essay outline", "English", "May 20", "emerald"],
-                  ["Problem Set 5", "Math", "May 28", "amber"],
-                  ["ML midterm review", "CS", "Jun 3", "slate"],
-                  ["Final project draft", "English", "Jun 10", "slate"],
-                ].map(([title, tag, date, tone], index) => (
+                  ["Notes processed", "24"],
+                  ["Tasks due soon", "5"],
+                  ["Focus score", "91%"],
+                ].map(([label, value]) => (
                   <div
-                    key={title}
-                    className={`flex items-center gap-3 rounded-xl border border-slate-100 bg-white px-3 py-2 text-sm shadow-sm ${
-                      index === 0 ? "ring-1 ring-emerald-100" : ""
-                    }`}
+                    key={label}
+                    className="rounded-2xl border border-border bg-background p-4"
                   >
-                    <span
-                      className={`size-2.5 rounded-full ${
-                        tone === "emerald"
-                          ? "bg-emerald-500"
-                          : tone === "amber"
-                            ? "bg-amber-500"
-                            : "bg-slate-300"
-                      }`}
-                    />
-                    <span className="min-w-0 flex-1 truncate text-slate-700">
-                      {title}
-                    </span>
-                    <span className="rounded-full bg-indigo-50 px-2 py-1 text-[10px] font-semibold text-indigo-700">
-                      {tag}
-                    </span>
-                    <span className="text-[11px] text-slate-500">{date}</span>
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                      {label}
+                    </p>
+                    <p className="mt-4 font-heading text-3xl tracking-tight text-foreground">
+                      {value}
+                    </p>
                   </div>
                 ))}
               </div>
-            </article>
+
+              <div className="mt-4 grid gap-4 md:grid-cols-[0.95fr_1.05fr]">
+                <div className="rounded-2xl border border-border bg-muted p-4">
+                  <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                    <Search className="size-3.5" />
+                    Search notes
+                  </div>
+                  <div className="mt-4 rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground">
+                    gradient descent
+                  </div>
+                  <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-semibold text-foreground">
+                    <Target className="size-3.5 text-primary" />
+                    Found in 4 notes
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-border bg-background p-4">
+                  <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                    <CalendarDays className="size-3.5 text-primary" />
+                    Upcoming
+                  </div>
+                  <ul className="mt-4 space-y-3 text-sm">
+                    <li className="flex items-center justify-between gap-3 rounded-xl border border-border bg-muted px-3 py-2">
+                      <span className="flex items-center gap-2">
+                        <span className="grid size-4 place-items-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground">
+                          ✓
+                        </span>
+                        Read Ch. 4
+                      </span>
+                    </li>
+                    <li className="flex items-center justify-between gap-3 rounded-xl border border-border px-3 py-2">
+                      <span className="flex items-center gap-2">
+                        <span className="size-4 rounded-full border border-border" />
+                        Stats problem set
+                      </span>
+                      <span className="text-xs font-semibold text-muted-foreground">
+                        Tomorrow
+                      </span>
+                    </li>
+                    <li className="flex items-center justify-between gap-3 rounded-xl border border-border px-3 py-2">
+                      <span className="flex items-center gap-2">
+                        <span className="size-4 rounded-full border border-border" />
+                        Midterm prep
+                      </span>
+                      <span className="text-xs font-semibold text-muted-foreground">
+                        Fri
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="features" className="border-y border-border bg-muted/40">
+          <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+            <div className="max-w-3xl">
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+                Features
+              </p>
+              <h2 className="mt-3 font-heading text-4xl tracking-tight text-foreground sm:text-5xl">
+                A cleaner way to keep up with class.
+              </h2>
+              <p className="mt-4 text-lg leading-8 text-muted-foreground">
+                Built around the shadcn color system, the page stays soft,
+                balanced, and easy to scan while still feeling designed.
+              </p>
+            </div>
+
+            <div className="mt-12 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+              {features.map((feature) => {
+                const Icon = feature.icon;
+                return (
+                  <article
+                    key={feature.title}
+                    className="rounded-3xl border border-border bg-card p-6 shadow-sm"
+                  >
+                    <div className="flex size-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                      <Icon className="size-5" />
+                    </div>
+                    <h3 className="mt-5 font-heading text-2xl tracking-tight text-foreground">
+                      {feature.title}
+                    </h3>
+                    <p className="mt-3 text-sm leading-7 text-muted-foreground">
+                      {feature.description}
+                    </p>
+                  </article>
+                );
+              })}
+            </div>
           </div>
         </section>
 
         <section
           id="how-it-works"
-          className="mx-auto max-w-6xl px-4 py-24 sm:px-6 lg:px-8"
+          className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8"
         >
-          <p className="text-xs font-bold uppercase tracking-[0.28em] text-indigo-600">
-            Simple as that
-          </p>
-          <h2 className="mt-4 max-w-3xl font-serif text-4xl tracking-tight text-slate-950 sm:text-5xl">
-            Up in under 2 minutes.
-          </h2>
+          <div className="max-w-3xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+              How it works
+            </p>
+            <h2 className="mt-3 font-heading text-4xl tracking-tight text-foreground sm:text-5xl">
+              Three steps from notes to momentum.
+            </h2>
+          </div>
 
-          <div className="mt-14 grid gap-10 md:grid-cols-3 md:gap-8">
+          <div className="mt-12 grid gap-5 lg:grid-cols-3">
             {steps.map((step) => (
-              <article key={step.number} className="relative">
-                <div className="mb-5 font-serif text-6xl italic text-slate-200">
+              <article
+                key={step.number}
+                className="rounded-3xl border border-border bg-card p-6 shadow-sm"
+              >
+                <p className="font-heading text-5xl tracking-tight text-primary/80">
                   {step.number}
-                </div>
-                <h3 className="font-serif text-2xl text-slate-950">
+                </p>
+                <h3 className="mt-5 font-heading text-2xl tracking-tight text-foreground">
                   {step.title}
                 </h3>
-                <p className="mt-3 max-w-sm text-sm leading-7 text-slate-600">
+                <p className="mt-3 text-sm leading-7 text-muted-foreground">
                   {step.text}
                 </p>
               </article>
@@ -411,53 +395,35 @@ function LandingPage() {
 
         <section
           id="pricing"
-          className="border-y border-indigo-100 bg-[#ece8fb]"
+          className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8"
         >
-          <div className="mx-auto max-w-4xl px-4 py-20 text-center sm:px-6 lg:px-8">
-            <p className="text-xs font-bold uppercase tracking-[0.28em] text-indigo-600">
-              Ready to ace this semester?
-            </p>
-            <h2 className="mt-4 font-serif text-4xl tracking-tight text-slate-950 sm:text-5xl">
-              Ready to <span className="italic text-indigo-600">ace</span> this
-              semester?
-            </h2>
-            <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-slate-600">
-              Join thousands of students who already use StudyBase to study
-              smarter.
-            </p>
-            <a
-              href="#home"
-              className="mt-8 inline-flex items-center gap-2 rounded-full bg-indigo-600 px-7 py-3.5 text-base font-semibold text-white shadow-[0_14px_28px_rgba(79,70,229,0.24)] transition hover:-translate-y-0.5 hover:bg-indigo-500"
-            >
-              Create your free account
-              <ArrowRight className="size-4" />
-            </a>
+          <div className="rounded-[2rem] border border-border bg-card p-8 shadow-sm sm:p-10">
+            <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+                  Ready to start
+                </p>
+                <h2 className="mt-3 font-heading text-4xl tracking-tight text-foreground sm:text-5xl">
+                  Make your next study session feel organized.
+                </h2>
+                <p className="mt-4 max-w-2xl text-lg leading-8 text-muted-foreground">
+                  Start with a simple dashboard that keeps your notes, planner,
+                  and reminders aligned so it is easier to stay on track.
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-3 sm:flex-row lg:justify-end">
+                <Button size="lg" asChild>
+                  <a href="#home">
+                    Create account
+                    <ArrowRight className="size-4" />
+                  </a>
+                </Button>
+              </div>
+            </div>
           </div>
         </section>
       </main>
-
-      <footer className="bg-[#1f1d33] text-white">
-        <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-8 text-sm text-white/70 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
-          <a
-            href="#home"
-            className="font-serif text-lg tracking-tight text-white"
-          >
-            StudyBase
-          </a>
-          <div className="flex gap-6">
-            <a href="#privacy" className="transition hover:text-white">
-              Privacy
-            </a>
-            <a href="#terms" className="transition hover:text-white">
-              Terms
-            </a>
-            <a href="#contact" className="transition hover:text-white">
-              Contact
-            </a>
-          </div>
-          <p>© 2025 StudyBase. All rights reserved.</p>
-        </div>
-      </footer>
     </div>
   );
 }
