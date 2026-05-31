@@ -1,0 +1,53 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum TaskColor {
+  red
+  green
+  yellow
+}
+
+model Task {
+  id String @id @default(cuid())
+  userId String
+  name String
+  description String?
+  deadline DateTime?
+  color TaskColor
+  status TaskStatus @default(PENDING)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  completedAt DateTime?
+
+  subjects Subject[] @relation("TaskSubjectRelation")
+  
+  parentId String?
+  parent Task? @relation("SubTaskRelation", fields: [parentId], references: [id])
+  children Task[] @relation("SubTaskRelation")
+}
+
+model Subject {
+  id String @id @default(cuid())
+  userId String
+  name String
+  tasks Task[] @relation("TaskSubjectRelation")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
