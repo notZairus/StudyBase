@@ -123,7 +123,7 @@ function LandingPage() {
                 >
                   <Link to="/login">Sign in</Link>
                 </Button>
-                <Button size="lg" asChild>
+                <Button size="lg" className="text-white" asChild>
                   <Link to="/register">
                     <Sparkles className="size-4" />
                     Get started
@@ -206,7 +206,7 @@ function LandingPage() {
             </p>
 
             <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Button size="lg" asChild>
+              <Button size="lg" className="text-white" asChild>
                 <a href="#pricing">
                   Start for free
                   <ArrowRight className="size-4" />
@@ -397,23 +397,27 @@ function LandingPage() {
           id="pricing"
           className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8"
         >
-          <div className="rounded-[2rem] border border-border bg-card p-8 shadow-sm sm:p-10">
+          <div className="rounded-[2rem] border border-border bg-primary p-8 shadow-sm sm:p-10">
             <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-white">
                   Ready to start
                 </p>
-                <h2 className="mt-3 font-heading text-4xl tracking-tight text-foreground sm:text-5xl">
+                <h2 className="mt-3 font-heading text-4xl tracking-tight text-white sm:text-5xl">
                   Make your next study session feel organized.
                 </h2>
-                <p className="mt-4 max-w-2xl text-lg leading-8 text-muted-foreground">
+                <p className="mt-4 max-w-2xl text-lg leading-8 text-white/80">
                   Start with a simple dashboard that keeps your notes, planner,
                   and reminders aligned so it is easier to stay on track.
                 </p>
               </div>
 
               <div className="flex flex-col gap-3 sm:flex-row lg:justify-end">
-                <Button size="lg" asChild>
+                <Button
+                  size="lg"
+                  className="bg-foreground text-white hover:bg-foreground"
+                  asChild
+                >
                   <a href="#home">
                     Create account
                     <ArrowRight className="size-4" />

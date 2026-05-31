@@ -5,9 +5,33 @@ import AddTaskModal from "./AddTaskModal";
 import { type Task } from "@studybase/shared";
 import { ScrollArea, ScrollBar } from "./ui/scroll-area";
 import TaskItem from "./TaskItem";
+import { getUpcomingTasks } from "../lib/utils";
+import { useTasks } from "../hooks/useGetTasks";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../components/ui/tabs";
 
-function UpcomingTasks({ tasks }: { tasks: Task[] }) {
+function UpcomingTasks() {
   const [showAddTaskModal, setShowAddTaskModal] = useState<boolean>(false);
+  const { data: tasks } = useTasks();
+
+  if (!tasks) {
+    return <div>Loading...</div>;
+  }
+
+  const allTasks = tasks.sort(
+    (a, b) =>
+      new Date(a.deadline as string).getTime() -
+      new Date(b.deadline as string).getTime(),
+  );
+
+  const uncompletedTasks = tasks.filter((task) => task.status !== "COMPLETED");
+  const upcomingTasks: Task[] = getUpcomingTasks(uncompletedTasks);
+
+  console.log("Upcoming Tasks:", upcomingTasks);
 
   return (
     <>
@@ -16,25 +40,51 @@ function UpcomingTasks({ tasks }: { tasks: Task[] }) {
         setShowAddTaskModal={setShowAddTaskModal}
       />
 
-      <Card className="w-full">
-        <CardTitle>Upcoming</CardTitle>
-        <div className="flex items-center justify-between">
-          <CardHeading className="text-xl">Upcoming Tasks</CardHeading>
-          <Button size="icon-sm" onClick={() => setShowAddTaskModal(true)}>
-            +
-          </Button>
-        </div>
-        <CardContent className="flex flex-col gap-2 px-0">
-          <ScrollArea className="h-80 w-full pr-3">
-            <ScrollBar className="text-primary" />
-            <div className="space-y-2">
-              {tasks.map((task) => (
-                <TaskItem task={task} />
-              ))}
-            </div>
-          </ScrollArea>
-        </CardContent>
-      </Card>
+      <Tabs defaultValue="all" className="w-full">
+        <Card className="w-full max-h-120">
+          <div className="flex items-center justify-between">
+            <CardTitle>Tasks</CardTitle>
+            <TabsList>
+              <TabsTrigger value="all">All</TabsTrigger>
+              <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
+            </TabsList>
+          </div>
+          <div className="flex items-center justify-between">
+            <TabsContent value="upcoming">
+              <CardHeading className="text-xl">Upcoming Tasks</CardHeading>
+            </TabsContent>
+            <TabsContent value="all">
+              <CardHeading className="text-xl">All Tasks</CardHeading>
+            </TabsContent>
+            <Button
+              size="icon-sm"
+              className="text-white"
+              onClick={() => setShowAddTaskModal(true)}
+            >
+              +
+            </Button>
+          </div>
+          <CardContent className="flex flex-col gap-2 px-0">
+            <ScrollArea className="max-h-73 h-73 w-full pr-3">
+              <ScrollBar className="text-primary" />
+              <TabsContent value="upcoming">
+                <div className="space-y-2">
+                  {upcomingTasks.map((task) => (
+                    <TaskItem key={task.id} task={task} />
+                  ))}
+                </div>
+              </TabsContent>
+              <TabsContent value="all">
+                <div className="space-y-2">
+                  {allTasks.map((task) => (
+                    <TaskItem key={task.id} task={task} />
+                  ))}
+                </div>
+              </TabsContent>
+            </ScrollArea>
+          </CardContent>
+        </Card>
+      </Tabs>
     </>
   );
 }

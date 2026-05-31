@@ -1,16 +1,15 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { TaskDTO } from "@studybase/shared";
 import { useAuth } from "@clerk/react";
-import { createTask } from "../api/task";
+import { toggleCompleteTask } from "../api/task";
 
-export function useCreateTask() {
+export function useToggleCompleteTask() {
   const { getToken } = useAuth();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (Task: TaskDTO) => {
+    mutationFn: async (id: string) => {
       const token = await getToken();
-      await createTask(token as string, Task);
+      await toggleCompleteTask(token as string, id);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({

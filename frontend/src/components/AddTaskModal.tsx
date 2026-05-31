@@ -161,7 +161,6 @@ function AddTaskModal({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="PENDING">Pending</SelectItem>
-                  <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
                   <SelectItem value="COMPLETED">Completed</SelectItem>
                 </SelectContent>
               </Select>

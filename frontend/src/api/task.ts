@@ -11,7 +11,7 @@ export async function get(token: string) {
   return data.tasks;
 }
 
-export async function post(token: string, data: TaskDTO) {
+export async function createTask(token: string, data: TaskDTO) {
   await fetch("http://localhost:3000/api/tasks", {
     method: "POST",
     headers: {
@@ -19,5 +19,15 @@ export async function post(token: string, data: TaskDTO) {
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(data),
+  });
+}
+
+export async function toggleCompleteTask(token: string, id: string) {
+  await fetch(`http://localhost:3000/api/tasks/status/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
   });
 }

@@ -14,7 +14,6 @@ datasource db {
 
 enum TaskStatus {
   PENDING
-  IN_PROGRESS
   COMPLETED
 }
 
@@ -39,7 +38,7 @@ model Task {
   subjects Subject[] @relation("TaskSubjectRelation")
   
   parentId String?
-  parent Task? @relation("SubTaskRelation", fields: [parentId], references: [id])
+  parent Task? @relation("SubTaskRelation", fields: [parentId], references: [id], onDelete: Cascade)
   children Task[] @relation("SubTaskRelation")
 }
 

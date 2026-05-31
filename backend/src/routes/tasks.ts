@@ -67,4 +67,36 @@ router.post("/", async (req: Request, res: Response) => {
   });
 });
 
+router.patch("/status/:taskId", async (req: Request, res: Response) => {
+  const { userId } = getAuth(req);
+
+  if (!userId) {
+    return res.status(403).send({
+      message: "Forbidden",
+    });
+  }
+
+  const { taskId } = req.params;
+
+  const targetTask = await prisma.task.findFirst({
+    where: { id: taskId as string },
+  });
+
+  if (!targetTask) {
+    return res.sendStatus(404);
+  }
+
+  const task = await prisma.task.update({
+    where: {
+      id: taskId as string,
+    },
+    data: {
+      status: targetTask.status === "PENDING" ? "COMPLETED" : "PENDING",
+      completedAt: targetTask.status === "PENDING" ? new Date() : null,
+    },
+  });
+
+  return res.status(200).send(task);
+});
+
 export default router;
