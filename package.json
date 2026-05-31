@@ -1,15 +1,23 @@
 {
   "name": "studybase",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend",
+    "shared"
+  ],
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "npm run dev --workspace=backend && npm run dev --workspace=frontend"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
-  "workspaces": ["frontend", "backend", "shared"]
+  "dependencies": {
+    "@hookform/resolvers": "^5.4.0",
+    "zod": "^4.4.3"
+  }
 }
-
-

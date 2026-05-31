@@ -3,18 +3,20 @@ jest.mock("@clerk/express", () => ({
   getAuth: jest.fn(),
 }));
 
-jest.mock("../prisma/client", () => ({
-  task: {
-    create: jest.fn().mockResolvedValue({
-      id: "task_123",
-      name: "Science Assignment",
-      description: "Finish alchemy exercises from chapter 5",
-      color: "red",
-      status: "PENDING",
-      deadline: "2026-06-01T10:00:00.000Z",
-    }),
-  },
-}));
+// jest.mock("../prisma/client.ts", () => ({
+//   prisma: {
+//     task: {
+//       create: jest.fn().mockResolvedValue({
+//         id: "task_123",
+//         name: "Science Assignment",
+//         description: "Finish alchemy exercises from chapter 5",
+//         color: "red",
+//         status: "PENDING",
+//         deadline: "2026-06-01T10:00:00.000Z",
+//       }),
+//     },
+//   },
+// }));
 
 import request from "supertest";
 import app from "../app";
@@ -27,6 +29,21 @@ beforeEach(() => {
 });
 
 describe("POST /api/tasks", () => {
+  jest.mock("../prisma/client.ts", () => ({
+    prisma: {
+      task: {
+        create: jest.fn().mockResolvedValue({
+          id: "task_123",
+          name: "Science Assignment",
+          description: "Finish alchemy exercises from chapter 5",
+          color: "red",
+          status: "PENDING",
+          deadline: "2026-06-01T10:00:00.000Z",
+        }),
+      },
+    },
+  }));
+
   it("should return 201 when authenticated and the data sent is valid", async () => {
     mockedGetAuth.mockReturnValue({ userId: "user_test_123" } as any);
 
@@ -36,7 +53,7 @@ describe("POST /api/tasks", () => {
         name: "Science Assignment",
         description: "Finish alchemy exercises from chapter 5",
         color: "red",
-        subject: ["Science"],
+        subjects: ["Science"],
         status: "PENDING",
         deadline: "2026-06-01T10:00:00.000Z",
       });
@@ -53,7 +70,7 @@ describe("POST /api/tasks", () => {
         name: "Science Assignment",
         description: "Finish alchemy exercises from chapter 5",
         color: "red",
-        subject: ["Science"],
+        subjects: ["Science"],
         status: "PENDING",
         deadline: "2026-06-01T10:00:00.000Z",
       });
@@ -71,12 +88,33 @@ describe("POST /api/tasks", () => {
         name: "",
         description: "Finish alchemy exercises from chapter 5",
         color: "red",
-        subject: ["Science"],
+        subjects: ["Science"],
         status: "PENDING",
         deadline: "2026-06-01T10:00:00.000Z",
       });
 
     expect(res.statusCode).toBe(400);
     expect(res.body).toHaveProperty("errors");
+  });
+});
+
+describe("GET /api/tasks", () => {
+  it("should return 403 when unauthenticated", async () => {
+    mockedGetAuth.mockReturnValue({ userId: null } as any);
+
+    const res = await request(app).get("/api/tasks");
+
+    expect(res.statusCode).toBe(403);
+  });
+
+  it("should return 200 and list of tasks when user is authenticated", async () => {
+    mockedGetAuth.mockReturnValue({
+      userId: "user_3ELLuVRYI9vSdxvsujMaNsZPx58",
+    } as any);
+
+    const res = await request(app).get("/api/tasks");
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty("tasks");
   });
 });

@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { cn } from "@/lib/utils";
+import { cn } from "../../lib/utils";
 
 function Card({
   className,
@@ -38,7 +38,7 @@ function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="card-title"
       className={cn(
-        "uppercase tracking-[0.3rem] text-xs font-medium",
+        "uppercase tracking-[0.3rem] text-[0.7rem] font-medium",
         className,
       )}
       {...props}

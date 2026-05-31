@@ -1,15 +1,17 @@
 -- CreateTable
 CREATE TABLE "Task" (
     "id" TEXT NOT NULL PRIMARY KEY,
+    "userId" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT,
-    "deadline" DATETIME NOT NULL,
-    "parentId" TEXT NOT NULL,
+    "deadline" DATETIME,
+    "color" TEXT NOT NULL,
     "status" TEXT NOT NULL DEFAULT 'PENDING',
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
     "completedAt" DATETIME,
-    CONSTRAINT "Task_parentId_fkey" FOREIGN KEY ("parentId") REFERENCES "Task" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    "parentId" TEXT,
+    CONSTRAINT "Task_parentId_fkey" FOREIGN KEY ("parentId") REFERENCES "Task" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- CreateTable

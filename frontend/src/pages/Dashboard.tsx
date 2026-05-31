@@ -1,25 +1,19 @@
 import DashboardHeader from "../components/DashboardHeader";
+import UpcomingTasks from "../components/UpcomingTasks";
 import { Card, CardTitle } from "../components/ui/card";
-
-const taskList = [
-  {
-    name: "Task 1",
-    description: "This is the first task",
-    status: "In Progress",
-  },
-  {
-    name: "Task 2",
-    description: "This is the second task",
-    status: "Completed",
-  },
-  {
-    name: "Task 3",
-    description: "This is the third task",
-    status: "Not Started",
-  },
-];
+import { getUpcomingTasks } from "./dashboard-utils.ts";
+import { type Task } from "@studybase/shared";
+import { useTasks } from "../hooks/useGetTasks.ts";
 
 function Dashboard() {
+  const { data: tasks } = useTasks();
+
+  if (!tasks) {
+    return <div>Loading...</div>;
+  }
+
+  const upcomingTasks: Task[] = getUpcomingTasks(tasks);
+
   return (
     <div className="min-h-screen w-full p-8">
       <div className="max-w-225 mx-auto">
@@ -28,9 +22,9 @@ function Dashboard() {
           <Card className="flex-1 bg-primary">
             <CardTitle>Today</CardTitle>
           </Card>
-          <Card className="flex-1 bg-secondary">
-            <CardTitle>Upcomming</CardTitle>
-          </Card>
+          <div className="flex-1">
+            <UpcomingTasks tasks={upcomingTasks} />
+          </div>
         </div>
       </div>
     </div>
