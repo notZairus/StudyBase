@@ -96,13 +96,13 @@ function Dashboard() {
       <div className="mx-auto">
         <DashboardHeader />
         <div className="flex flex-col w-full gap-8 mt-8 items-center sm:items-start sm:flex-row sm:flex-wrap">
-          <div className="flex-1 w-full">
+          <div className="flex-1 w-full min-w-xs">
             <TodayTask />
           </div>
-          <div className="flex-1 w-full">
+          <div className="flex-1 w-full min-w-xs">
             <UpcomingTasks />
           </div>
-          <div className="flex-1 w-full">
+          <div className="flex-1 w-full min-w-xs">
             <OverdueTasks />
           </div>
 
@@ -115,7 +115,10 @@ function Dashboard() {
               <CardContent className="w-full p-0">
                 <div className="flex flex-wrap w-full gap-2">
                   {subjects.map((subject) => (
-                    <div className="text-sm text-foreground/80 font border border-black/20 rounded-lg px-4 py-2">
+                    <div
+                      key={subject.id}
+                      className="text-sm text-foreground/80 font border border-black/20 rounded-lg px-4 py-2"
+                    >
                       {subject.name}
                     </div>
                   ))}

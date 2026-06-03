@@ -1,5 +1,5 @@
 import { Request, Router, Response } from "express";
-import { createTaskSchema, Task } from "@studybase/shared";
+import { createTaskSchema, Task, updateTaskSchema } from "@studybase/shared";
 import { z } from "zod";
 import { getAuth } from "@clerk/express";
 import { prisma } from "../prisma/client";
@@ -28,6 +28,7 @@ router.get("/", async (req: Request, res: Response) => {
     where,
     include: {
       subjects: true,
+      subtasks: true,
     },
   });
 
@@ -82,6 +83,8 @@ router.post("/", async (req: Request, res: Response) => {
   });
 });
 
+// PATCH /////////////////////////////////////////////
+
 router.patch("/:taskId/status", async (req: Request, res: Response) => {
   const { userId } = getAuth(req);
 
@@ -112,6 +115,49 @@ router.patch("/:taskId/status", async (req: Request, res: Response) => {
   });
 
   return res.status(200).send(task);
+});
+
+router.patch("/:taskId", async (req, res) => {
+  const { userId } = getAuth(req);
+
+  if (!userId) {
+    return res.status(403).send({ message: "Forbidden" });
+  }
+
+  const { taskId } = req.params;
+
+  const result = updateTaskSchema.safeParse(req.body);
+
+  if (!result.success) {
+    return res.status(400).json(z.treeifyError(result.error));
+  }
+
+  const { subjects, ...rest } = result.data;
+
+  const task = await prisma.task.update({
+    where: { id: taskId },
+    data: {
+      ...rest,
+      ...(subjects !== undefined && {
+        subjects: {
+          set: [],
+          connectOrCreate: subjects.map((sub) => ({
+            where: {
+              userId_name: {
+                userId,
+                name: sub,
+              },
+            },
+            create: { userId, name: sub },
+          })),
+        },
+      }),
+    },
+  });
+
+  return res.status(200).send({
+    task: task,
+  });
 });
 
 export default router;

@@ -1,9 +1,7 @@
 import type { TaskDTO } from "@studybase/shared";
 
 export async function get(token: string, status: string = "all") {
-  const endpoint = `http://localhost:3000/api/tasks?status=${status}`;
-
-  const res = await fetch(endpoint, {
+  const res = await fetch(`http://localhost:3000/api/tasks?status=${status}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -31,5 +29,20 @@ export async function toggleCompleteTask(token: string, id: string) {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
+  });
+}
+
+export async function updateTask(
+  token: string,
+  id: string,
+  data: Partial<TaskDTO>,
+) {
+  await fetch(`http://localhost:3000/api/tasks/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
   });
 }

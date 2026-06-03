@@ -7,7 +7,7 @@ export function useTasks(status: string = "all") {
   const { getToken } = useAuth();
 
   return useQuery<Task[]>({
-    queryKey: ["tasks", status],
+    queryKey: ["tasks", "status", status],
     staleTime: 1000 * 60 * 5,
     queryFn: async () => {
       const token = await getToken();

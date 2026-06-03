@@ -8,6 +8,7 @@ import { clerkMiddleware } from "@clerk/express";
 import { rateLimit } from "express-rate-limit";
 import tasks from "./routes/tasks";
 import subjects from "./routes/subjects";
+import subtasks from "./routes/subtasks";
 
 const app = express();
 
@@ -46,5 +47,6 @@ app.get("/api", (req, res) => {
 
 app.use("/api/subjects", subjects);
 app.use("/api/tasks", tasks);
+app.use("/api/subtasks", subtasks);
 
 export default app;

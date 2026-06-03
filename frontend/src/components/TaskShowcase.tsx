@@ -1,9 +1,32 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogTitle } from "./ui/dialog";
 import { Badge } from "./ui/badge";
-import { CalendarDays, CheckCircle2, Circle, Tag, Plus } from "lucide-react";
-import { type Task } from "@studybase/shared";
+import {
+  CalendarDays,
+  CheckCircle2,
+  Circle,
+  Tag,
+  Plus,
+  X,
+  ChevronDown,
+} from "lucide-react";
+import { type Task, type TaskDTO } from "@studybase/shared";
 import { useToggleCompleteTask } from "../hooks/useToggleComplete";
+import { ScrollArea, ScrollBar } from "./ui/scroll-area";
+
+// Shadcn primitives (Make sure these are installed and paths are correct)
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { Calendar } from "./ui/calendar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { useUpdateTask } from "../hooks/useUpdateTask";
+import { useDebouncedCallback } from "use-debounce";
+import { useSubjects } from "../hooks/useSubjects";
+import AddSubTaskModal from "./AddSubTaskModal";
 
 const colorConfig: Record<
   Task["color"],
@@ -32,253 +55,396 @@ const colorConfig: Record<
   },
 };
 
-function formatDeadline(iso?: string, includeYear = true) {
-  if (!iso) return null;
-  return new Date(iso).toLocaleDateString("en-US", {
+function formatDeadline(dateObj?: Date | string | null, includeYear = true) {
+  if (!dateObj) return null;
+  return new Date(dateObj).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
     ...(includeYear && { year: "numeric" }),
   });
 }
 
-// Dummy data generator matching the main Task shape
-const getMockSubtasks = (): Task[] => [
-  {
-    id: "sub-1",
-    name: "Analyze architectural patterns and structural goals",
-    status: "COMPLETED",
-    color: "green",
-    deadline: "2024-12-01T17:00:00.000Z",
-    description: "",
-    subjects: [],
-  },
-  {
-    id: "sub-2",
-    name: "Draft initial layout variations and view models",
-    status: "PENDING",
-    color: "red",
-    deadline: new Date(Date.now() + 86400000 * 2).toISOString(), // 2 days out
-    description: "",
-    subjects: [],
-  },
-  {
-    id: "sub-3",
-    name: "Peer review with technical staff",
-    status: "PENDING",
-    color: "yellow",
-    deadline: "2024-12-01T17:00:00.000Z",
-    description: "",
-    subjects: [],
-  },
-];
+interface TaskShowcaseProps {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  task: Task;
+  /** The universe of available subjects in your app to populate the add-tag picker */
+}
 
 const TaskShowcase = ({
   open = false,
   setOpen,
-  task,
-}: {
-  open: boolean;
-  setOpen: (open: boolean) => void;
-  task: Task;
-}) => {
+  task: taskProp,
+}: TaskShowcaseProps) => {
+  const [task, setTask] = useState<
+    (Omit<Task, "subjects"> & { subjects: string[] }) | null
+  >(null);
+  const [openAddSubTaskModal, setOpenSubTaskModal] = useState(false);
+  const toggleComplete = useToggleCompleteTask();
+  const updateTask = useUpdateTask();
+  const { data: allAvailableSubjects } = useSubjects();
+  const debouncedHandleUpdate = useDebouncedCallback(
+    (taskId: string, updatedFields: Partial<TaskDTO>) => {
+      updateTask.mutate({
+        id: taskId,
+        data: updatedFields,
+      });
+    },
+    500,
+  );
+
+  useEffect(() => {
+    function placeTask() {
+      setTask({
+        ...taskProp,
+        subjects: taskProp.subjects.map((s) => s.name),
+      });
+    }
+    placeTask();
+  }, [taskProp]);
+
+  if (!task) {
+    return (
+      <Dialog open={open} onOpenChange={() => setOpen(false)}>
+        <DialogContent>Loading...</DialogContent>
+      </Dialog>
+    );
+  }
+
   const color = colorConfig[task.color];
   const isCompleted = task.status === "COMPLETED";
-  const deadline = formatDeadline(task.deadline);
-  const toggleComplete = useToggleCompleteTask();
-
-  // Local state to make dummy subtasks fully interactive for testing
-  const [subtasks, setSubtasks] = useState<Task[]>(getMockSubtasks);
+  const deadlineLabel = formatDeadline(task.deadline);
 
   const handleToggleComplete = () => {
+    setTask({
+      ...task,
+      status: task.status === "PENDING" ? "COMPLETED" : "PENDING",
+    });
+
     toggleComplete.mutate(task.id);
-    setOpen(false);
   };
 
-  const handleToggleSubtask = (subtaskId: string) => {
-    setSubtasks((prev) =>
-      prev.map((sub) =>
-        sub.id === subtaskId
-          ? {
-              ...sub,
-              status: sub.status === "COMPLETED" ? "PENDING" : "COMPLETED",
-            }
-          : sub,
-      ),
-    );
-  };
+  // const handleToggleSubtask = (subtaskId: string) => {
+  //   setSubtasks((prev) =>
+  //     prev.map((sub) =>
+  //       sub.id === subtaskId
+  //         ? {
+  //             ...sub,
+  //             status: sub.status === "COMPLETED" ? "PENDING" : "COMPLETED",
+  //           }
+  //         : sub,
+  //     ),
+  //   );
+  // };
 
-  const completedSubtasksCount = subtasks.filter(
+  const completedSubtasksCount = task.subtasks?.filter(
     (s) => s.status === "COMPLETED",
   ).length;
 
+  // Local handler to abstract the parent component updates
+  const emitUpdate = (fields: Partial<TaskDTO>) => {
+    console.log(fields);
+    setTask({ ...task, ...fields });
+    debouncedHandleUpdate(task.id, fields);
+  };
+
+  // Tag Modification Handlers
+  const handleAddSubject = (subj: string) => {
+    const existing = task.subjects || [];
+    if (existing.some((s) => s === subj)) return;
+    emitUpdate({ subjects: [...existing, subj] });
+  };
+
+  const handleRemoveSubject = (subjectName: string) => {
+    const existing = task.subjects || [];
+    emitUpdate({ subjects: existing.filter((s) => s !== subjectName) });
+  };
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent
-        className="sm:max-w-lg p-0 overflow-hidden gap-0 rounded-2xl border bg-background shadow-xl"
-        showCloseButton={true}
-      >
-        <div className="p-6 space-y-6">
-          {/* Main Task Header */}
-          <div className="flex items-start gap-3.5 pr-6">
-            <button
-              onClick={handleToggleComplete}
-              className="mt-1 shrink-0 relative group transition-transform active:scale-95 focus:outline-none"
-              aria-label={
-                isCompleted ? "Mark task incomplete" : "Mark task complete"
-              }
-            >
-              {isCompleted ? (
-                <CheckCircle2 className="size-5 text-emerald-500 fill-emerald-50 dark:fill-emerald-950/30 transition-colors" />
-              ) : (
-                <Circle className="size-5 text-muted-foreground/50 group-hover:text-emerald-500 transition-colors" />
-              )}
-            </button>
+    <>
+      <AddSubTaskModal
+        open={openAddSubTaskModal}
+        setOpen={setOpenSubTaskModal}
+        parentTask={task}
+      />
 
-            <div className="space-y-1 flex-1">
-              <DialogTitle
-                className={`text-lg font-semibold tracking-tight leading-snug transition-colors ${
-                  isCompleted
-                    ? "line-through text-muted-foreground/70"
-                    : "text-foreground"
-                }`}
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent
+          className="sm:max-w-lg p-0 overflow-hidden gap-0 rounded-2xl border bg-background shadow-xl animate-in fade-in-50 duration-200"
+          showCloseButton={true}
+        >
+          <div className="p-6 space-y-6">
+            {/* Main Task Header - Editable Input */}
+            <div className="flex items-start gap-3.5 pr-6">
+              <button
+                onClick={handleToggleComplete}
+                className="mt-1.5 shrink-0 relative group transition-transform active:scale-95 focus:outline-none"
+                aria-label={
+                  isCompleted ? "Mark task incomplete" : "Mark task complete"
+                }
               >
-                {task.name}
-              </DialogTitle>
-            </div>
-          </div>
-
-          {/* Description Block */}
-          {task.description && (
-            <p className="text-[14px] text-muted-foreground/90 leading-relaxed bg-muted/30 px-4 py-3 rounded-xl border border-muted/50">
-              {task.description}
-            </p>
-          )}
-
-          {/* Subtasks Section */}
-          <div className="space-y-2.5">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <h4 className="text-[11px] font-semibold tracking-wider text-muted-foreground/80 uppercase">
-                  Subtasks
-                </h4>
-                <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground/90 border border-border/40">
-                  {completedSubtasksCount} of {subtasks.length}
-                </span>
-              </div>
-              <button className="text-[11px] font-medium text-muted-foreground/60 hover:text-foreground flex items-center gap-1 transition-colors group px-1 py-0.5 rounded">
-                <Plus className="size-3 group-hover:scale-110 transition-transform" />
-                Add
+                {isCompleted ? (
+                  <CheckCircle2 className="size-5 text-emerald-500 fill-emerald-50 dark:fill-emerald-950/30 transition-colors" />
+                ) : (
+                  <Circle className="size-5 text-muted-foreground/50 group-hover:text-emerald-500 transition-colors" />
+                )}
               </button>
+
+              <div className="flex-1">
+                <DialogTitle className="sr-only">{task.name}</DialogTitle>
+                <input
+                  type="text"
+                  value={task.name}
+                  onChange={(e) => emitUpdate({ name: e.target.value })}
+                  placeholder="Task title..."
+                  className={`w-full bg-transparent border-0 p-0 text-lg font-semibold tracking-tight leading-snug focus:outline-none focus:ring-0 placeholder:text-muted-foreground/40 transition-colors ${
+                    isCompleted
+                      ? "line-through text-muted-foreground/60"
+                      : "text-foreground"
+                  }`}
+                />
+              </div>
             </div>
 
-            <div className="rounded-xl border border-border/50 bg-card/30 divide-y divide-border/30 overflow-hidden">
-              {subtasks.map((sub) => {
-                const subConfig = colorConfig[sub.color];
-                const subCompleted = sub.status === "COMPLETED";
-                const subDeadline = formatDeadline(sub.deadline, false);
-
-                return (
-                  <div
-                    key={sub.id}
-                    className="flex items-center justify-between p-3 gap-3 hover:bg-muted/20 transition-colors group/row"
-                  >
-                    <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                      <button
-                        onClick={() => handleToggleSubtask(sub.id)}
-                        className="shrink-0 transition-transform active:scale-95 focus:outline-none"
-                      >
-                        {subCompleted ? (
-                          <CheckCircle2 className="size-4 text-emerald-500 fill-emerald-50 dark:fill-emerald-950/20" />
-                        ) : (
-                          <Circle className="size-4 text-muted-foreground/40 group-hover/row:text-muted-foreground/70" />
-                        )}
-                      </button>
-                      <span
-                        className={`text-sm tracking-tight truncate transition-colors ${
-                          subCompleted
-                            ? "line-through text-muted-foreground/50"
-                            : "text-foreground/90"
-                        }`}
-                      >
-                        {sub.name}
-                      </span>
-                    </div>
-
-                    {/* Subtask Meta Context Badges */}
-                    <div className="flex items-center gap-2 shrink-0 pl-1">
-                      {subDeadline && !subCompleted && (
-                        <span className="inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground/70 bg-muted/50 px-1.5 py-0.5 rounded border border-border/30">
-                          <CalendarDays className="size-2.5" />
-                          {subDeadline}
-                        </span>
-                      )}
-                      <span
-                        className={`size-1.5 rounded-full ${subConfig.dot}`}
-                        title={subConfig.label}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Metadata Panel */}
-          <div className="rounded-xl border border-border/60 bg-card/50 divide-y divide-border/40 text-sm">
-            {/* Priority Row */}
-            <div className="flex items-center justify-between p-3.5">
-              <span className="text-muted-foreground font-medium text-xs">
-                Priority
-              </span>
-              <Badge
-                variant="outline"
-                className={`font-medium text-xs px-2.5 py-0.5 rounded-md gap-1.5 ${color.badge}`}
-              >
-                <span className={`size-1.5 rounded-full ${color.dot}`} />
-                {color.label}
-              </Badge>
+            {/* Description Block - Editable Textarea */}
+            <div className="relative bg-muted/20 rounded-xl border border-border/60 focus-within:border-muted-foreground/30 focus-within:bg-muted/30 transition-all">
+              <textarea
+                value={task.description || ""}
+                onChange={(e) => emitUpdate({ description: e.target.value })}
+                placeholder="Add a detailed description..."
+                className="w-full  max-h-36 bg-transparent border-0 p-3 text-[14px] text-muted-foreground/90 leading-relaxed placeholder:text-muted-foreground/40 focus:outline-none focus:ring-0 resize-y"
+              />
             </div>
 
-            {/* Deadline Row */}
-            <div className="flex items-center justify-between p-3.5">
-              <span className="text-muted-foreground font-medium text-xs">
-                Due Date
-              </span>
-              {deadline ? (
-                <div className="flex items-center gap-1.5 text-xs font-medium text-foreground/80 bg-muted/60 px-2.5 py-0.5 rounded-md border">
-                  <CalendarDays className="size-3.5 text-muted-foreground" />
-                  <span>{deadline}</span>
-                </div>
-              ) : (
-                <span className="text-xs text-muted-foreground/60 italic">
-                  No deadline set
+            {/* Metadata Panel */}
+            <div className="rounded-xl border border-border/60 bg-card/50 divide-y divide-border/40 text-sm">
+              {/* Priority Selector Row */}
+              <div className="flex items-center justify-between p-3.5">
+                <span className="text-muted-foreground font-medium text-xs">
+                  Priority
                 </span>
-              )}
-            </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="focus:outline-none group">
+                      <Badge
+                        variant="outline"
+                        className={`font-medium text-xs px-2.5 py-1 rounded-md gap-1.5 cursor-pointer transition-all hover:bg-accent/40 ${color.badge}`}
+                      >
+                        <span
+                          className={`size-1.5 rounded-full ${color.dot}`}
+                        />
+                        {color.label}
+                        <ChevronDown className="size-3 opacity-60 group-hover:opacity-100 transition-opacity" />
+                      </Badge>
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    align="end"
+                    className="rounded-xl min-w-35"
+                  >
+                    {(Object.keys(colorConfig) as Task["color"][]).map(
+                      (key) => {
+                        const cfg = colorConfig[key];
+                        return (
+                          <DropdownMenuItem
+                            key={key}
+                            onClick={() => emitUpdate({ color: key })}
+                            className="flex items-center gap-2 text-xs py-2 rounded-lg cursor-pointer"
+                          >
+                            <span
+                              className={`size-1.5 rounded-full ${cfg.dot}`}
+                            />
+                            {cfg.label}
+                          </DropdownMenuItem>
+                        );
+                      },
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
 
-            {/* Subjects Row */}
-            {task.subjects && task.subjects.length > 0 && (
+              {/* Due Date Picker Row */}
+              <div className="flex items-center justify-between p-3.5">
+                <span className="text-muted-foreground font-medium text-xs">
+                  Due Date
+                </span>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <button className="flex items-center gap-1.5 text-xs font-medium text-foreground/80 bg-muted/60 hover:bg-muted/90 px-2.5 py-1 rounded-md border transition-colors focus:outline-none">
+                      <CalendarDays className="size-3.5 text-muted-foreground" />
+                      <span>{deadlineLabel || "Set due date"}</span>
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    align="end"
+                    className="p-0 w-auto rounded-xl shadow-lg border"
+                  >
+                    <Calendar
+                      mode="single"
+                      selected={
+                        task.deadline ? new Date(task.deadline) : undefined
+                      }
+                      onSelect={(date: Date | undefined) => {
+                        if (!date) return;
+
+                        const time = task.deadline.split("T")[1];
+
+                        const year = date.getFullYear();
+                        const month = String(date.getMonth() + 1).padStart(
+                          2,
+                          "0",
+                        );
+                        const day = String(date.getDate()).padStart(2, "0");
+                        const dateString = `${year}-${month}-${day}`;
+
+                        emitUpdate({ deadline: `${dateString}T${time}` });
+                      }}
+                      className="rounded-xl"
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+
+              {/* Subjects Tag Management Row */}
               <div className="flex items-start justify-between p-3.5 gap-4">
-                <span className="text-muted-foreground font-medium text-xs pt-1 flex items-center gap-1.5">
+                <span className="text-muted-foreground font-medium text-xs pt-1.5 flex items-center gap-1.5">
                   <Tag className="size-3 text-muted-foreground/70" />
                   Subjects
                 </span>
-                <div className="flex flex-wrap justify-end gap-1.5 max-w-[70%]">
-                  {task.subjects.map((s) => (
+
+                <div className="flex flex-wrap justify-end gap-1.5 max-w-[75%] items-center">
+                  {/* Active tags with delete actions */}
+                  {task.subjects?.map((s) => (
                     <span
-                      key={s.id}
-                      className="inline-flex items-center text-xs px-2 py-0.5 rounded-md bg-secondary text-secondary-foreground font-medium border border-border/40"
+                      key={s}
+                      className="inline-flex items-center gap-1 text-xs pl-2 pr-1 py-0.5 rounded-md bg-secondary text-secondary-foreground font-medium border border-border/40"
                     >
-                      {s.name}
+                      {s}
+                      {task.subjects.length > 1 && (
+                        <button
+                          onClick={() => handleRemoveSubject(s)}
+                          className="text-muted-foreground/60 hover:text-foreground hover:bg-background/60 p-0.5 rounded transition-all focus:outline-none"
+                        >
+                          <X className="size-2.5" />
+                        </button>
+                      )}
                     </span>
                   ))}
+
+                  {/* Add dynamic subject picker dropdown */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-1 rounded-md border border-dashed border-border text-muted-foreground/70 hover:text-foreground hover:border-muted-foreground/40 transition-all focus:outline-none">
+                        <Plus className="size-2.5" />
+                        Add
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                      align="end"
+                      className="max-h-50 overflow-y-auto rounded-xl text-xs min-w-37.5"
+                    >
+                      {allAvailableSubjects &&
+                      allAvailableSubjects?.length === 0 ? (
+                        <div className="p-2 text-center text-muted-foreground italic">
+                          No options available
+                        </div>
+                      ) : (
+                        allAvailableSubjects &&
+                        allAvailableSubjects?.map((subject) => (
+                          <DropdownMenuItem
+                            key={subject.id}
+                            onClick={() => handleAddSubject(subject.name)}
+                            disabled={task.subjects?.some(
+                              (s) => (s as string) === subject.name,
+                            )}
+                            className="rounded-lg py-1.5 px-2.5 cursor-pointer disabled:opacity-40"
+                          >
+                            {subject.name}
+                          </DropdownMenuItem>
+                        ))
+                      )}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </div>
-            )}
+            </div>
+            <div className="space-y-2.5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <h4 className="text-[11px] font-semibold tracking-wider text-muted-foreground/80 uppercase">
+                    Subtasks
+                  </h4>
+                  <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground/90 border border-border/40">
+                    {completedSubtasksCount} of {task.subtasks?.length}
+                  </span>
+                </div>
+                <button
+                  className="text-[11px] font-medium text-muted-foreground/60 hover:text-foreground flex items-center gap-1 transition-colors group px-1 py-0.5 rounded"
+                  onClick={() => setOpenSubTaskModal(true)}
+                >
+                  <Plus className="size-3 group-hover:scale-110 transition-transform" />
+                  Add
+                </button>
+              </div>
+
+              {/* Subtasks Section */}
+              <div>
+                <ScrollArea className="h-40 rounded-xl border border-border/50 bg-card/30">
+                  <ScrollBar />
+                  <div className="rounded-xl border border-border/50 bg-card/30 divide-y divide-border/30 overflow-hidden">
+                    {task.subtasks?.map((sub) => {
+                      const subConfig = colorConfig[sub.color];
+                      const subCompleted = sub.status === "COMPLETED";
+
+                      return (
+                        <div
+                          key={sub.id}
+                          className="flex items-center justify-between p-3 gap-3 hover:bg-muted/20 transition-colors group/row"
+                        >
+                          <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                            <button
+                              // onClick={() => handleToggleSubtask(sub.id)}
+                              className="shrink-0 transition-transform active:scale-95 focus:outline-none"
+                            >
+                              {subCompleted ? (
+                                <CheckCircle2 className="size-4 text-emerald-500 fill-emerald-50 dark:fill-emerald-950/20" />
+                              ) : (
+                                <Circle className="size-4 text-muted-foreground/40 group-hover/row:text-muted-foreground/70" />
+                              )}
+                            </button>
+                            <span
+                              className={`text-sm tracking-tight truncate transition-colors ${
+                                subCompleted
+                                  ? "line-through text-muted-foreground/50"
+                                  : "text-foreground/90"
+                              }`}
+                            >
+                              {sub.name}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-2 shrink-0 pl-1">
+                            <span
+                              className={`size-1.5 rounded-full ${subConfig.dot}`}
+                              title={subConfig.label}
+                            />
+                          </div>
+                        </div>
+                      );
+                    })}
+                    {task.subtasks?.length === 0 && (
+                      <div className="p-3 w-full  text-center text-muted-foreground/70 italic">
+                        No subtasks yet. Add one to get started!
+                      </div>
+                    )}
+                  </div>
+                </ScrollArea>
+              </div>
+            </div>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 

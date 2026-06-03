@@ -18,8 +18,6 @@ function TodayTask() {
       })
     : [];
 
-  console.log(todayTasks);
-
   return (
     <Card className="w-full max-h-108 bg-primary text-white shadow-lg">
       <CardTitle>Today</CardTitle>
