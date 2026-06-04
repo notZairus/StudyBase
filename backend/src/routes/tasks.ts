@@ -2,7 +2,7 @@ import { Request, Router, Response } from "express";
 import { createTaskSchema, Task, updateTaskSchema } from "@studybase/shared";
 import { z } from "zod";
 import { getAuth } from "@clerk/express";
-import { prisma } from "../prisma/client";
+import { prisma } from "../../prisma/client";
 
 const router = Router();
 
