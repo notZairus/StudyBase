@@ -86,14 +86,14 @@ jobs:
             CLERK_SECRET_KEY=${{ secrets.CLERK_SECRET_KEY }}
             EOF
 
-            cd backend
+            cd /var/www/StudyBase/backend
             npm install
             npx prisma generate
             npm run build 
 
             cd ..
 
-            cd frontend
+            cd /var/www/StudyBase/frontend
             npm install
             npm run build
 
