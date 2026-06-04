@@ -1,7 +1,9 @@
 import type { SubtaskDTO } from "@studybase/shared";
 
+const serverUrl = import.meta.env.VITE_SERVER_URL;
+
 export async function createSubtask(token: string, subtask: SubtaskDTO) {
-  const res = await fetch("http://localhost:3000/api/subtasks", {
+  const res = await fetch(`${serverUrl}/subtasks`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

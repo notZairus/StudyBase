@@ -1,7 +1,9 @@
 import type { TaskDTO } from "@studybase/shared";
 
+const serverUrl = import.meta.env.VITE_SERVER_URL;
+
 export async function get(token: string, status: string = "all") {
-  const res = await fetch(`http://localhost:3000/api/tasks?status=${status}`, {
+  const res = await fetch(`${serverUrl}/tasks?status=${status}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -12,7 +14,7 @@ export async function get(token: string, status: string = "all") {
 }
 
 export async function createTask(token: string, data: TaskDTO) {
-  await fetch("http://localhost:3000/api/tasks", {
+  await fetch(`${serverUrl}/tasks`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -23,7 +25,7 @@ export async function createTask(token: string, data: TaskDTO) {
 }
 
 export async function toggleCompleteTask(token: string, id: string) {
-  await fetch(`http://localhost:3000/api/tasks/${id}/status`, {
+  await fetch(`${serverUrl}/tasks/${id}/status`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -37,7 +39,7 @@ export async function updateTask(
   id: string,
   data: Partial<TaskDTO>,
 ) {
-  await fetch(`http://localhost:3000/api/tasks/${id}`, {
+  await fetch(`${serverUrl}/tasks/${id}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -48,7 +50,7 @@ export async function updateTask(
 }
 
 export async function deleteTask(token: string, id: string) {
-  await fetch(`http://localhost:3000/api/tasks/${id}`, {
+  await fetch(`${serverUrl}/tasks/${id}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",

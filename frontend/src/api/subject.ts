@@ -1,5 +1,7 @@
+const serverUrl = import.meta.env.VITE_SERVER_URL;
+
 export async function getSubjects(token: string) {
-  const endpoint = `http://localhost:3000/api/subjects`;
+  const endpoint = `${serverUrl}/subjects`;
 
   const res = await fetch(endpoint, {
     headers: {
