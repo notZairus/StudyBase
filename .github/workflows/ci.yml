@@ -27,13 +27,6 @@ jobs:
       - name: Install frontend dependencies
         run: npm install
 
-      - name: Write frontend .env file
-        run: |
-          ssh user@${{ secrets.SERVER_IP }} "cat > /var/www/StudyBase/frontend/.env" << 'EOF'
-          VITE_CLERK_PUBLISHABLE_KEY=${{ secrets.CLERK_PUBLISHABLE_KEY }}
-          VITE_SERVER_URL=${{ secrets.VITE_SERVER_URL }}
-          EOF"
-
       - name: Build frontend
         run: npm run build
 
@@ -54,17 +47,6 @@ jobs:
 
       - name: Install backend dependencies
         run: npm install
-
-      - name: Write backend .env file
-        run: |
-          ssh user@${{ secrets.SERVER_IP }} "cat > /var/www/StudyBase/backend/.env" << 'EOF'
-          SECRET_KEY=${{ secrets.SECRET_KEY }}
-          NODE_ENV=${{ secrets.NODE_ENV }}
-          PORT=${{ secrets.PORT }}
-          DATABASE_URL=${{ secrets.DATABASE_URL }}
-          CLERK_PUBLISHABLE_KEY=${{ secrets.CLERK_PUBLISHABLE_KEY }}
-          CLERK_SECRET_KEY=${{ secrets.CLERK_SECRET_KEY }}
-          EOF"
 
       - name: Generate Prisma client
         run: npx prisma generate
@@ -88,6 +70,20 @@ jobs:
             cd /var/www/StudyBase
 
             git pull origin main
+
+            cat > /var/www/StudyBase/frontend/.env" << 'EOF'
+            VITE_CLERK_PUBLISHABLE_KEY=${{ secrets.CLERK_PUBLISHABLE_KEY }}
+            VITE_SERVER_URL=${{ secrets.VITE_SERVER_URL }}
+            EOF
+
+            cat > /var/www/StudyBase/backend/.env" << 'EOF'
+            SECRET_KEY=${{ secrets.SECRET_KEY }}
+            NODE_ENV=${{ secrets.NODE_ENV }}
+            PORT=${{ secrets.PORT }}
+            DATABASE_URL=${{ secrets.DATABASE_URL }}
+            CLERK_PUBLISHABLE_KEY=${{ secrets.CLERK_PUBLISHABLE_KEY }}
+            CLERK_SECRET_KEY=${{ secrets.CLERK_SECRET_KEY }}
+            EOF
 
             cd backend
             npm install
