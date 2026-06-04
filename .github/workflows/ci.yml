@@ -67,16 +67,17 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             \. "$HOME/.nvm/nvm.sh"
-            cd /var/www/StudyBase
+            rm -rf /var/www/StudyBase
+            cd /var/www
 
-            git pull origin main
+            git clone git@github.com:notZairus/StudyBase.git
 
-            cat > /var/www/StudyBase/frontend/.env" << 'EOF'
+            cat > /var/www/StudyBase/frontend/.env << 'EOF'
             VITE_CLERK_PUBLISHABLE_KEY=${{ secrets.CLERK_PUBLISHABLE_KEY }}
             VITE_SERVER_URL=${{ secrets.VITE_SERVER_URL }}
             EOF
 
-            cat > /var/www/StudyBase/backend/.env" << 'EOF'
+            cat > /var/www/StudyBase/backend/.env << 'EOF'
             SECRET_KEY=${{ secrets.SECRET_KEY }}
             NODE_ENV=${{ secrets.NODE_ENV }}
             PORT=${{ secrets.PORT }}
