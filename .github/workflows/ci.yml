@@ -88,10 +88,12 @@ jobs:
 
             cd /var/www/StudyBase/backend
             npm install
+            npm run build
+
+            cd /var/www/StudyBase/backend
+            npm install
             npx prisma generate
             npm run build 
-
-            cd ..
 
             cd /var/www/StudyBase/frontend
             npm install
