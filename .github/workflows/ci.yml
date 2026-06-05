@@ -51,15 +51,10 @@ jobs:
     needs: build-studybase
     runs-on: ubuntu-latest
     steps:
-
-      - name: Setup SSH
-        run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
-
+      
       - name: Pull latest changes on server
         run: |
-          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+          ssh root@${{ secrets.SERVER_IP }} << 'EOF'
             set -e
             cd /var/www/StudyBase
             git pull origin main
@@ -68,7 +63,7 @@ jobs:
 
       - name: Copy frontend env file to server
         run: |
-          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+          ssh root@${{ secrets.SERVER_IP }} << 'EOF'
             set -e
 
             cd /var/www/StudyBase/frontend
@@ -81,7 +76,7 @@ jobs:
 
       - name: Copy backend env file to server
         run: |
-          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+          ssh root@${{ secrets.SERVER_IP }} << 'EOF'
             set -e
             
             cd /var/www/StudyBase/backend
