@@ -104,7 +104,7 @@ jobs:
           ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
             set -e
             cd /var/www/StudyBase
-            npm ci
+            npm install
           EOF
 
       - name: build shared on server
