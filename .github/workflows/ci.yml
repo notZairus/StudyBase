@@ -37,57 +37,90 @@ jobs:
       - name: Build frontend
         run: npm run build --workspace=frontend
 
-  deploy:
+  shared:
     runs-on: ubuntu-latest
-    needs: [build]
 
-    steps: 
-      - name: Deploy to DigitalOcean
-        uses: appleboy/ssh-action@v1.0.3
-        with: 
-          host: ${{ secrets.SERVER_IP }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            \. "$HOME/.nvm/nvm.sh"
-            rm -rf /var/www/StudyBase
-            cd /var/www
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-            git clone git@github.com:notZairus/StudyBase.git
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
 
-            cat > /var/www/StudyBase/frontend/.env << 'EOF'
-            VITE_CLERK_PUBLISHABLE_KEY=${{ secrets.CLERK_PUBLISHABLE_KEY }}
-            VITE_SERVER_URL=${{ secrets.VITE_SERVER_URL }}
-            EOF
+      - name: Install dependencies (workspaces)
+        run: npm install
 
-            cat > /var/www/StudyBase/backend/.env << 'EOF'
-            SECRET_KEY=${{ secrets.SECRET_KEY }}
-            NODE_ENV=${{ secrets.NODE_ENV }}
-            PORT=${{ secrets.PORT }}
-            DATABASE_URL=${{ secrets.DATABASE_URL }}
-            CLERK_PUBLISHABLE_KEY=${{ secrets.CLERK_PUBLISHABLE_KEY }}
-            CLERK_SECRET_KEY=${{ secrets.CLERK_SECRET_KEY }}
-            EOF
+      - name: Install dependencies (shared)
+        run: npm install
+        working-directory: ./shared
 
-            cd /var/www/StudyBase/shared
-            npm install
-            npm run build
+      - name: Build shared
+        run: npm run build 
+        working-directory: ./shared
 
-            cd /var/www/StudyBase/backend
-            npm install
-            npx prisma generate
-            npm run build 
+      - name: Upload shared artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: shared
+          path: ./shared/dist
+          retention-days: 1
 
-            cd /var/www/StudyBase/frontend
-            npm install
-            npm run build
+  backend:
+    runs-on: ubuntu-latest
+    needs: shared
 
-            pm2 restart backend
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Download shared artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: shared
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+
+      - name: Install dependencies (backend)
+        run: npm install
+        working-directory: ./backend
+
+      - name: Generate Prisma client
+        run: npx prisma generate 
+        working-directory: ./backend
+
+      - name: Build backend
+        run: npm run build
+        working-directory: ./backend
+
+  frontend:
+    runs-on: ubuntu-latest
+    needs: shared
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Download shared artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: shared
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+
+      - name: Install dependencies (frontend)
+        run: npm install
+        working-directory: ./frontend
+
+      - name: Build frontend
+        run: npm run build
+        working-directory: ./frontend
+
+      
 
 
 
+      
 
-  
-
-    
-
+      
