@@ -98,3 +98,39 @@ jobs:
             SECRET_KEY=${{ secrets.SECRET_KEY }}
             EOT
           EOF
+
+      - name: install root dependencies on server
+        run: |
+          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+            set -e
+            cd /var/www/StudyBase
+            npm ci
+          EOF
+
+      - name: build shared on server
+        run: |
+          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+            set -e
+            cd /var/www/StudyBase/shared
+            npm install
+            npm run build
+          EOF
+
+      - name: build backend on server
+        run: |
+          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+            set -e
+            cd /var/www/StudyBase/backend
+            npm install
+            npx prisma generate
+            npm run build
+          EOF
+
+      - name: build frontend on server
+        run: |
+          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+            set -e
+            cd /var/www/StudyBase/frontend
+            npm install
+            npm run build
+          EOF
