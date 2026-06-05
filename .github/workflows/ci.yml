@@ -103,6 +103,8 @@ jobs:
         run: |
           ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
             set -e
+
+            \. "$HOME/.nvm/nvm.sh"
             cd /var/www/StudyBase
             npm install
           EOF
@@ -111,6 +113,8 @@ jobs:
         run: |
           ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
             set -e
+
+            \. "$HOME/.nvm/nvm.sh"
             cd /var/www/StudyBase/shared
             npm install
             npm run build
@@ -120,6 +124,8 @@ jobs:
         run: |
           ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
             set -e
+            
+            \. "$HOME/.nvm/nvm.sh"
             cd /var/www/StudyBase/backend
             npm install
             npx prisma generate
@@ -130,6 +136,8 @@ jobs:
         run: |
           ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
             set -e
+            
+            \. "$HOME/.nvm/nvm.sh"
             cd /var/www/StudyBase/frontend
             npm install
             npm run build
