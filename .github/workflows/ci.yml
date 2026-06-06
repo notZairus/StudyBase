@@ -104,8 +104,8 @@ jobs:
           ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
             set -e
             cd /var/www/StudyBase
-            docker-compose down
-            docker-compose up --build -d 
+            docker compose down
+            docker compose up --build -d 
           EOF
 
       
