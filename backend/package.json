@@ -2,6 +2,7 @@
   "name": "@studybase/backend",
   "version": "1.0.0",
   "main": "dist/src/server.js",
+  "type": "commonjs",
   "scripts": {
     "test": "jest --detectOpenHandles",
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
