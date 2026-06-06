@@ -21,4 +21,28 @@ router.get("/", async (req: Request, res: Response) => {
   return res.status(200).send({ subjects });
 });
 
+router.delete("/:subjectId", async (req: Request, res: Response) => {
+  const { userId } = getAuth(req);
+  if (!userId) res.status(403).send({ message: "Forbidden" });
+
+  const { subjectId } = req.params;
+
+  await prisma.subject.delete({
+    where: {
+      id: subjectId as string,
+    },
+  });
+
+  await prisma.task.deleteMany({
+    where: {
+      userId: userId as string,
+      subjects: {
+        none: {},
+      },
+    },
+  });
+
+  return res.status(200).send({ message: "successful" });
+});
+
 export default router;

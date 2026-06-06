@@ -1,23 +1,23 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { deleteSubject } from "../api/subject";
 import { useAuth } from "@clerk/react";
-import { toggleCompleteTask } from "../api/task";
 
-export function useToggleCompleteTask() {
+export function useDeleteSubject() {
   const { getToken } = useAuth();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (id: string) => {
       const token = await getToken();
-      await toggleCompleteTask(token as string, id);
+      await deleteSubject(token as string, id);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["tasks"],
+        queryKey: ["subjects"],
       });
 
       queryClient.invalidateQueries({
-        queryKey: ["subjects"],
+        queryKey: ["tasks"],
       });
     },
   });

@@ -12,3 +12,13 @@ export async function getSubjects(token: string) {
   const data = await res.json();
   return data.subjects;
 }
+
+export async function deleteSubject(token: string, id: string) {
+  await fetch(`${serverUrl}/subjects/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
