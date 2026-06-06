@@ -101,11 +101,10 @@ jobs:
 
       - name: Restart application using Docker Compose
         run: |
-          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+          ssh -tt ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
             set -e
             cd /var/www/StudyBase
             docker compose down
-            docker compose up --build -d 
+            docker compose up --build -d
+            exit
           EOF
-
-      
