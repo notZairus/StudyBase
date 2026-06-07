@@ -2,9 +2,11 @@ FROM node:22-alpine
 
 WORKDIR /app
 
-COPY backend ./backend/
 
+COPY backend/package*.json ./backend/
 RUN cd backend && npm ci
+
+COPY backend ./backend/
 RUN cd backend && npm run prisma:generate
 RUN cd backend && npm run build
 
