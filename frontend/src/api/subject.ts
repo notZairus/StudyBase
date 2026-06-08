@@ -1,4 +1,4 @@
-import type { subjectDTO, UpdateSubjectDTO } from "../schemas/subject.schema";
+import type { subjectDTO } from "../schemas/subject.schema";
 
 const serverUrl = import.meta.env.VITE_SERVER_URL;
 
