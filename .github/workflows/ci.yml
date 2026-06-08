@@ -9,9 +9,6 @@ on:
 jobs:
   frontend:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./frontend
 
     strategy:
       matrix:
@@ -30,16 +27,15 @@ jobs:
 
     - name: Install dependencies 
       run: npm ci
+      working-directory: ./frontend
 
     - name: Build
       run: npm run build
-      
+      working-directory: ./frontend
+
 
   backend:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory:  ./backend
 
     strategy:
       matrix:
@@ -58,9 +54,12 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+        working-directory: ./backend
 
       - name: Generate prisma types
         run: npx prisma generate
+        working-directory: ./backend
 
       - name: Build
         run: npm run build
+        working-directory: ./backend
