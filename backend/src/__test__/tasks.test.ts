@@ -81,6 +81,19 @@ describe("POST /api/tasks", () => {
 });
 
 describe("GET /api/tasks", () => {
+  beforeEach(() => {
+    jest.spyOn(prisma.task, "findMany").mockResolvedValue([
+      {
+        id: "task_123",
+        name: "Science Assignment",
+        description: "Finish alchemy exercises from chapter 5",
+        color: "red",
+        status: "PENDING",
+        deadline: "2026-06-01T10:00:00.000Z",
+      },
+    ] as any);
+  });
+
   it("should return 403 when unauthenticated", async () => {
     mockedGetAuth.mockReturnValue({ userId: null } as any);
 
