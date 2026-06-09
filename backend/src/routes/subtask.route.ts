@@ -34,4 +34,36 @@ router.post("/", async (req, res) => {
   });
 });
 
+router.patch(`/:subtaskId/status`, async (req, res) => {
+  console.log("halal");
+  const { userId } = getAuth(req);
+  if (!userId) return res.status(403).send({ message: "Forbidden" });
+
+  const { subtaskId } = req.params;
+  if (!subtaskId) return res.sendStatus(400);
+
+  const targetSubtask = await prisma.subtask.findFirst({
+    where: {
+      id: subtaskId,
+    },
+  });
+
+  console.log("hulul");
+
+  if (!targetSubtask) return res.sendStatus(404);
+
+  const updated = await prisma.subtask.update({
+    where: {
+      id: subtaskId,
+    },
+    data: {
+      status: targetSubtask.status === "COMPLETED" ? "PENDING" : "COMPLETED",
+    },
+  });
+
+  return res.status(200).send({
+    subtask: updated,
+  });
+});
+
 export default router;

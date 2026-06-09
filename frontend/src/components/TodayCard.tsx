@@ -3,7 +3,7 @@ import TaskItem from "./TaskItem";
 import { Card, CardTitle, CardHeading, CardContent } from "./ui/card";
 import { ScrollBar, ScrollArea } from "./ui/scroll-area";
 
-function TodayTask() {
+function TodayCard() {
   const { data: tasks } = useTasks();
 
   const todayTasks = tasks
@@ -62,17 +62,17 @@ function TodayTask() {
           <Card className="flex-1 bg-white/10 border-0 ring-0 shadow-md p-3 rounded-lg"></Card>
         </div>
         <div className="mt-2 flex flex-col sm:flex-row gap-4">
-          <ScrollArea className="max-h-48 w-full pr-4 rounded-lg">
-            <ScrollBar className="bg-black/10 rounded-full" />
+          <ScrollArea className="max-h-48 w-full rounded-lg">
+            <ScrollBar />
             <div className="space-y-2 pb-2">
               {todayTasks.length > 0 &&
                 todayTasks.map((task) => (
                   <TaskItem key={task.id} task={task} variant="primary" />
                 ))}
               {todayTasks.length === 0 && (
-                <p className="text-center text-sm text-white/80">
-                  No tasks due today!
-                </p>
+                <div className="w-full text-accent/60 text-xl h-40 flex items-center justify-center">
+                  No Pending Task Today
+                </div>
               )}
             </div>
           </ScrollArea>
@@ -82,4 +82,4 @@ function TodayTask() {
   );
 }
 
-export default TodayTask;
+export default TodayCard;

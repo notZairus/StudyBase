@@ -30,20 +30,14 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { useUpdateTask } from "../hooks/useUpdateTask";
-// Import your delete hook here when ready, e.g.:
-// import { useDeleteTask } from "../hooks/useDeleteTask";
 import { useDebouncedCallback } from "use-debounce";
 import { useSubjects } from "../hooks/useSubjects";
 import { useDeleteTask } from "../hooks/useDeleteTask";
 import AddSubTaskModal from "./AddSubTaskModal";
 import { format } from "date-fns-tz";
 import { Input } from "./ui/input";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "../components/ui/hover-card";
 import { useTask } from "../hooks/useTasks";
+import SubtaskItem from "./SubtaskItem";
 
 const colorConfig: Record<
   Task["color"],
@@ -452,62 +446,9 @@ const TaskShowcase = ({ open = false, setOpen, taskId }: TaskShowcaseProps) => {
                 <ScrollArea className="h-32 rounded-xl border border-border/50 bg-card/30">
                   <ScrollBar />
                   <div className="rounded-xl border border-border/50 bg-card/30 divide-y divide-border/30 overflow-hidden">
-                    {task.subtasks?.map((sub) => {
-                      const subConfig = colorConfig[sub.color];
-                      const subCompleted = sub.status === "COMPLETED";
-
-                      return (
-                        <HoverCard key={sub.id}>
-                          <div className="flex items-center justify-between p-3 gap-3 hover:bg-muted/20 transition-colors group/row">
-                            <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                              <button className="shrink-0 transition-transform active:scale-95 focus:outline-none">
-                                {subCompleted ? (
-                                  <CheckCircle2 className="size-4 text-emerald-500 fill-emerald-50 dark:fill-emerald-950/20" />
-                                ) : (
-                                  <Circle className="size-4 text-muted-foreground/40 group-hover/row:text-muted-foreground/70" />
-                                )}
-                              </button>
-                              <HoverCardTrigger
-                                className="min-w-0 flex-1"
-                                asChild
-                              >
-                                <span
-                                  className={`text-sm tracking-tight truncate transition-colors ${
-                                    subCompleted
-                                      ? "line-through text-muted-foreground/50"
-                                      : "text-foreground/90"
-                                  }`}
-                                >
-                                  {sub.name}
-                                </span>
-                              </HoverCardTrigger>
-                              <HoverCardContent
-                                className="w-auto p-3 rounded-xl max-w-xs border shadow-lg"
-                                align="start"
-                              >
-                                <p
-                                  className={`text-sm leading-relaxed ${
-                                    subCompleted
-                                      ? "line-through text-muted-foreground/50"
-                                      : "text-foreground/90"
-                                  }`}
-                                >
-                                  {sub.description ||
-                                    "No description provided."}
-                                </p>
-                              </HoverCardContent>
-                            </div>
-
-                            <div className="flex items-center gap-2 shrink-0 pl-1">
-                              <span
-                                className={`size-1.5 rounded-full ${subConfig.dot}`}
-                                title={subConfig.label}
-                              />
-                            </div>
-                          </div>
-                        </HoverCard>
-                      );
-                    })}
+                    {task.subtasks?.map((sub) => (
+                      <SubtaskItem key={sub.id} subtask={sub} />
+                    ))}
                     {task.subtasks?.length === 0 && (
                       <div className="p-3 w-full text-center text-muted-foreground/70 italic">
                         No subtasks yet. Add one to get started!

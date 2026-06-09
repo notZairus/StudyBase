@@ -13,7 +13,7 @@ import type { Subject } from "../schemas/subject.schema";
 import { Button } from "./ui/button";
 import AddSubjectModal from "./AddSubjectModal";
 
-const Subjects = () => {
+const SubjectCard = () => {
   const { data: subjects } = useSubjects();
   const [openSubjectShowcase, setOpenSubjectShowcase] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState<Subject | null>(null);
@@ -61,7 +61,7 @@ const Subjects = () => {
                       setSelectedSubject(subject);
                       setOpenSubjectShowcase(true);
                     }}
-                    className="text-sm text-foreground/80 font border border-black/20 rounded-lg px-4 py-2"
+                    className="text-sm text-foreground/80 font border border-black/20 rounded-full px-4 py-2 transition-all"
                   >
                     {subject.name}
                   </div>
@@ -81,4 +81,4 @@ const Subjects = () => {
   );
 };
 
-export default Subjects;
+export default SubjectCard;

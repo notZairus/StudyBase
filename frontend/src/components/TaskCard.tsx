@@ -9,16 +9,14 @@ import { getUpcomingTasks } from "../lib/utils";
 import { useTasks } from "../hooks/useTasks";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 
-function TaskPanel() {
+function TaskCard() {
   const [showAddTaskModal, setShowAddTaskModal] = useState<boolean>(false);
   const { data: tasks } = useTasks();
   const { data: overdueTasks } = useTasks("overdue");
   const { data: completedTasks } = useTasks("completed");
 
-  if (!tasks || !overdueTasks || !completedTasks) {
-    return <div>Loading...</div>;
-  }
-  const uncompletedTasks = tasks.filter((task) => task.status !== "COMPLETED");
+  const uncompletedTasks =
+    tasks?.filter((task) => task.status !== "COMPLETED") || [];
   const upcomingTasks: Task[] = getUpcomingTasks(uncompletedTasks);
 
   return (
@@ -29,7 +27,7 @@ function TaskPanel() {
       />
 
       <Tabs defaultValue="upcoming" className="w-full">
-        <Card className="w-full max-h-120">
+        <Card className="w-full max-h-120 ">
           <div className="flex items-center justify-between">
             <CardTitle>Tasks</CardTitle>
             <TabsList className="mt-1 ">
@@ -57,27 +55,66 @@ function TaskPanel() {
             </Button>
           </div>
           <CardContent className="flex flex-col gap-2 px-0">
-            <ScrollArea className="max-h-73 h-73 w-full pr-3">
+            <ScrollArea className="max-h-72 h-72 w-full">
               <ScrollBar className="text-primary" />
               <TabsContent value="upcoming">
                 <div className="space-y-2">
-                  {upcomingTasks.map((task) => (
-                    <TaskItem key={task.id} task={task} />
-                  ))}
+                  {!upcomingTasks && (
+                    <div className="w-full text-accent-foreground/50 text-xl h-40 flex items-center justify-center">
+                      Loading...
+                    </div>
+                  )}
+
+                  {upcomingTasks &&
+                    upcomingTasks?.map((task) => (
+                      <TaskItem key={task.id} task={task} />
+                    ))}
+
+                  {upcomingTasks && upcomingTasks?.length === 0 && (
+                    <div className="w-full text-accent-foreground/50 text-xl h-40 flex items-center justify-center">
+                      No Upcomming Tasks
+                    </div>
+                  )}
                 </div>
               </TabsContent>
               <TabsContent value="overdue">
                 <div className="space-y-2">
-                  {overdueTasks.map((task) => (
-                    <TaskItem key={task.id} task={task} />
-                  ))}
+                  {!overdueTasks && (
+                    <div className="w-full text-accent-foreground/50 text-xl h-40 flex items-center justify-center">
+                      Loading...
+                    </div>
+                  )}
+
+                  {overdueTasks &&
+                    overdueTasks.map((task) => (
+                      <TaskItem key={task.id} task={task} />
+                    ))}
+
+                  {overdueTasks && overdueTasks.length === 0 && (
+                    <div className="w-full text-accent-foreground/50 text-xl h-40 flex items-center justify-center">
+                      No Overdue Tasks
+                    </div>
+                  )}
                 </div>
               </TabsContent>
               <TabsContent value="completed">
                 <div className="space-y-2">
-                  {completedTasks.map((task) => (
-                    <TaskItem key={task.id} task={task} />
-                  ))}
+                  {!completedTasks && (
+                    <div className="w-full text-accent-foreground/50 text-xl h-40 flex items-center justify-center">
+                      Loading...
+                    </div>
+                  )}
+
+                  {completedTasks &&
+                    completedTasks.map((task) => (
+                      <TaskItem key={task.id} task={task} />
+                    ))}
+
+                  {completedTasks && completedTasks.length === 0 && (
+                    <div className="w-full text-accent-foreground/50 text-xl h-40 flex items-center justify-center">
+                      No Completed Tasks
+                    </div>
+                  )}
                 </div>
               </TabsContent>
             </ScrollArea>
@@ -88,4 +125,4 @@ function TaskPanel() {
   );
 }
 
-export default TaskPanel;
+export default TaskCard;
