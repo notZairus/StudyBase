@@ -72,7 +72,7 @@ function PomodoroCard() {
             return 0;
           }
         });
-      }, 1000);
+      }, 900);
     }
 
     return () => {
@@ -141,7 +141,7 @@ function PomodoroCard() {
 
           {!started && (
             <div className="space-y-2">
-              <div className="flex items-end justify-between">
+              <div className="flex items-center justify-between">
                 <Label className="text-sm  w-36">Focus Session</Label>
                 <Input
                   id="work-duration"
@@ -154,7 +154,7 @@ function PomodoroCard() {
                   className="w-16 text-center"
                 />
               </div>
-              <div className="flex items-end justify-between">
+              <div className="flex items-center justify-between">
                 <Label className="text-sm  w-36">Short Break</Label>
                 <Input
                   id="short-break-duration"
@@ -169,7 +169,7 @@ function PomodoroCard() {
                   className="w-16 text-center"
                 />
               </div>
-              <div className="flex items-end justify-between">
+              <div className="flex items-center justify-between">
                 <Label className="text-sm  w-36">Long Break</Label>
                 <Input
                   id="long-break-duration"

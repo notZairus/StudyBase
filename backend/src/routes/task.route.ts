@@ -42,8 +42,6 @@ router.get("/", async (req: Request, res: Response) => {
 });
 
 router.get("/:taskId", async (req: Request, res: Response) => {
-  console.log("get single task");
-
   const { userId } = getAuth(req);
   if (!userId) res.status(403).send({ message: "Forbidden" });
 

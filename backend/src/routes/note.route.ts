@@ -2,8 +2,7 @@ import { Router } from "express";
 import upload from "../lib/upload";
 import fs from "fs";
 import { exec } from "child_process";
-import path from "path";
-import { rejects } from "assert";
+import { makeCleanMarkdown } from "../lib/ai";
 
 const router = Router();
 
@@ -23,9 +22,7 @@ router.post("/extract", upload.single("file"), async (req, res) => {
           rejects(err);
         }
 
-        fs.unlink(fileToExtract.path, (err) => {
-          console.log(`${fileToExtract.path} deleted.`);
-        });
+        fs.unlink(fileToExtract.path, (err) => {});
 
         resolve(stdout);
       },
@@ -34,10 +31,12 @@ router.post("/extract", upload.single("file"), async (req, res) => {
 
   const extractedText = output.trimStart().trimEnd().split("   ").join("");
 
-  // should i make ai format it into a proper 
+  const aiOutput = await makeCleanMarkdown(extractedText);
+  console.log(aiOutput);
 
   return res.json({
-    extractedText,
+    title: aiOutput.title,
+    content: aiOutput.content,
   });
 });
 

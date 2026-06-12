@@ -11,7 +11,6 @@ import z from "zod";
 const router = Router();
 
 router.get("/:subjectId", async (req: Request, res: Response) => {
-  console.log("trugff");
   const { userId } = getAuth(req);
   if (!userId) res.status(403).send({ message: "Forbidden" });
 
@@ -35,7 +34,6 @@ router.get("/:subjectId", async (req: Request, res: Response) => {
 });
 
 router.get("/", async (req: Request, res: Response) => {
-  console.log("hulullll");
   const { userId } = getAuth(req);
   if (!userId) res.status(403).send({ message: "Forbidden" });
 

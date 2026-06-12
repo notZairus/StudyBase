@@ -150,7 +150,11 @@ const TaskShowcase = ({ open = false, setOpen, taskId }: TaskShowcaseProps) => {
       />
 
       {/* Confirmation Dialog for Deletion */}
-      <Dialog open={openConfirmDelete} onOpenChange={setOpenConfirmDelete}>
+      <Dialog
+        open={openConfirmDelete}
+        onOpenChange={setOpenConfirmDelete}
+        modal={false}
+      >
         <DialogContent className="sm:max-w-md p-6 rounded-2xl border bg-background shadow-xl">
           <DialogTitle className="text-lg font-semibold tracking-tight">
             Delete Task
@@ -181,7 +185,7 @@ const TaskShowcase = ({ open = false, setOpen, taskId }: TaskShowcaseProps) => {
       </Dialog>
 
       {/* Main Showcase Dialog */}
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={open} onOpenChange={setOpen} modal={false}>
         <DialogContent
           className="sm:max-w-lg p-0 overflow-hidden gap-0 rounded-2xl border bg-background shadow-xl animate-in fade-in-50 duration-200"
           showCloseButton={false}

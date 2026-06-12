@@ -103,7 +103,7 @@ const SubjectShowcase = ({
       </Dialog>
 
       {/* Main Showcase Dialog */}
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={open} onOpenChange={setOpen} modal={false}>
         <DialogContent
           className="sm:max-w-xl p-0 overflow-hidden gap-0 rounded-2xl border bg-background shadow-xl animate-in fade-in-50 duration-200"
           showCloseButton={false}

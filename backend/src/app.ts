@@ -14,7 +14,10 @@ import notes from "./routes/note.route";
 const app = express();
 
 app.use(clerkMiddleware());
-
+app.use((req, res, next) => {
+  console.log(`${req.method} -- ${req.path}`);
+  next();
+});
 app.use(express.json());
 app.use(cors());
 app.use(

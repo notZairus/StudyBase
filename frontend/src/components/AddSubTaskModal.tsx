@@ -73,7 +73,7 @@ function AddSubTaskModal({
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={setOpen} modal={false}>
       <DialogContent className="sm:max-w-lg p-0 overflow-hidden rounded-2xl border bg-background shadow-xl">
         <form
           onSubmit={handleSubmit(onSubmit)}
