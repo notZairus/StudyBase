@@ -45,24 +45,25 @@ function NoteCard() {
                 >
                   All
                 </Button>
-                {subjects
-                  ?.filter((s) => s.notes.length > 0)
-                  .map((subject) => (
-                    <Button
-                      key={subject.id}
-                      variant="outline"
-                      className={cn(
-                        "py-2 px-4 rounded-full bg-white border w-full cursor-pointer hover:bg-sidebar-accent hover:text-black",
-                        {
-                          "bg-primary font-semibold text-white hover:bg-primary hover:text-white":
-                            selectedSubject === subject.name,
-                        },
-                      )}
-                      onClick={() => setSelectedSubject(subject.name)}
-                    >
-                      {subject.name}
-                    </Button>
-                  ))}
+                {subjects &&
+                  subjects
+                    ?.filter((s) => s?.notes?.length > 0)
+                    .map((subject) => (
+                      <Button
+                        key={subject.id}
+                        variant="outline"
+                        className={cn(
+                          "py-2 px-4 rounded-full bg-white border w-full cursor-pointer hover:bg-sidebar-accent hover:text-black",
+                          {
+                            "bg-primary font-semibold text-white hover:bg-primary hover:text-white":
+                              selectedSubject === subject.name,
+                          },
+                        )}
+                        onClick={() => setSelectedSubject(subject.name)}
+                      >
+                        {subject.name}
+                      </Button>
+                    ))}
               </div>
             </ScrollArea>
           </div>
@@ -72,7 +73,7 @@ function NoteCard() {
             <ScrollArea className="mt-2 w-full h-40 sm:h-[calc(100dvh-503px)]  rounded-md">
               <ScrollBar />
               <div className=" w-full flex items-start flex-wrap gap-1">
-                {notes.length === 0 && (
+                {notes && notes.length === 0 && (
                   <p className="w-full text-muted-foreground text-center text-sm mt-4">
                     No notes found.
                   </p>

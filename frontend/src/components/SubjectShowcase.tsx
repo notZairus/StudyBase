@@ -7,7 +7,7 @@ import {
   DialogFooter,
 } from "./ui/dialog";
 import { Button } from "./ui/button";
-import { Trash2, ListTodo } from "lucide-react";
+import { Trash2, ListTodo, Plus } from "lucide-react";
 import { type subjectDTO } from "../schemas/subject.schema";
 import { ScrollArea, ScrollBar } from "./ui/scroll-area";
 import type { Task } from "../schemas/task.schema";
@@ -17,6 +17,7 @@ import { useDeleteSubject } from "../hooks/useDeleteSubject";
 import TaskItemLong from "./TaskItemLong";
 import { useSubject } from "../hooks/useSubjects";
 import { type Subject } from "../schemas/subject.schema";
+import AddTaskModal from "./AddTaskModal";
 
 interface SubjectShowcaseProps {
   open: boolean;
@@ -31,6 +32,7 @@ const SubjectShowcase = ({
 }: SubjectShowcaseProps) => {
   const { data: subject } = useSubject(subjectId);
   const [subjectCopy, setSubjectCopy] = useState<Subject | null>(null);
+  const [openAddTaskModal, setOpenAddTaskModal] = useState(false);
   const [openConfirmDelete, setOpenConfirmDelete] = useState(false);
 
   const updateSubject = useUpdateSubject();
@@ -69,6 +71,8 @@ const SubjectShowcase = ({
 
   return (
     <>
+      <AddTaskModal open={openAddTaskModal} setOpen={setOpenAddTaskModal} />
+
       {/* Confirmation Dialog for Deletion */}
       <Dialog open={openConfirmDelete} onOpenChange={setOpenConfirmDelete}>
         <DialogContent className="sm:max-w-md p-6 rounded-2xl border bg-background shadow-xl">
@@ -146,7 +150,7 @@ const SubjectShowcase = ({
 
             {/* Tasks Section (Mirrors Subtasks Layout) */}
             <div className="space-y-2.5">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between w-full">
                 <div className="flex items-center gap-2">
                   <ListTodo className="size-3.5 text-muted-foreground/80" />
                   <h4 className="text-[11px] font-semibold tracking-wider text-muted-foreground/80 uppercase">
@@ -161,6 +165,14 @@ const SubjectShowcase = ({
                     of {subject.tasks.length} completed
                   </span>
                 </div>
+
+                <button
+                  className="text-[11px] font-medium text-muted-foreground/60 hover:text-foreground flex items-center gap-1 transition-colors group px-1 py-0.5 rounded"
+                  onClick={() => setOpenAddTaskModal(true)}
+                >
+                  <Plus className="size-3 group-hover:scale-110 transition-transform" />
+                  Add
+                </button>
               </div>
 
               <div>
