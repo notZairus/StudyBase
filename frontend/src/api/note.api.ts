@@ -1,5 +1,7 @@
 import type { NoteDTO } from "../schemas/note.schema";
 
+const serverUrl = import.meta.env.VITE_SERVER_URL;
+
 export async function extractTextFromDocument(token: string, file: File) {
   const formData = new FormData();
   formData.append("file", file);
@@ -28,4 +30,14 @@ export async function createNote(token: string, noteData: NoteDTO) {
 
   const data = await res.json();
   return data.note;
+}
+
+export async function deleteNote(token: string, id: string) {
+  await fetch(`${serverUrl}/notes/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
 }

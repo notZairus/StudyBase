@@ -65,7 +65,7 @@ function TaskCard() {
           </TabsList>
 
           <CardContent className="w-full h-full">
-            <ScrollArea className="w-full h-80 sm:h-[calc(100dvh-18rem)] rounded-lg">
+            <ScrollArea className="w-full h-80 sm:h-[calc(100dvh-16rem)] rounded-lg">
               <ScrollBar />
               <TabsContent value="today" className="space-y-2">
                 {!todayTasks.length && (

@@ -129,7 +129,7 @@ const SubjectShowcase = ({
                       debouncedHandleUpdate(subjectCopy.id, { name: newValue });
                     }}
                     placeholder="Subject name..."
-                    className="w-full bg-transparent border-0 p-0 text-xl font-semibold tracking-tight leading-snug focus:outline-none focus:ring-0 placeholder:text-muted-foreground/40 transition-colors text-foreground"
+                    className="w-full bg-transparent border-0 p-0 text-xl  tracking-tight leading-snug focus:outline-none focus:ring-0 font-heading placeholder:text-muted-foreground/40 transition-colors text-foreground"
                   />
                 </div>
               </div>

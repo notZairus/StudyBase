@@ -83,14 +83,14 @@ const TaskShowcase = ({ open = false, setOpen, taskId }: TaskShowcaseProps) => {
   const deleteTask = useDeleteTask();
 
   const { data: allAvailableSubjects } = useSubjects();
-  const debouncedHandleUpdate = useDebouncedCallback(
+  const debouncedUpdateMutate = useDebouncedCallback(
     (taskId: string, updatedFields: Partial<TaskDTO>) => {
       updateTask.mutate({
         id: taskId,
         data: updatedFields,
       });
     },
-    500,
+    300,
   );
 
   useEffect(() => {
@@ -127,7 +127,7 @@ const TaskShowcase = ({ open = false, setOpen, taskId }: TaskShowcaseProps) => {
   ).length;
 
   const emitUpdate = (fields: Partial<TaskDTO>) => {
-    debouncedHandleUpdate(task.id, fields);
+    debouncedUpdateMutate(task.id, fields);
   };
 
   const handleAddSubject = (subj: string) => {
@@ -218,7 +218,7 @@ const TaskShowcase = ({ open = false, setOpen, taskId }: TaskShowcaseProps) => {
                       emitUpdate({ name: e.target.value });
                     }}
                     placeholder="Task title..."
-                    className={`w-full bg-transparent border-0 p-0 text-lg font-semibold tracking-tight leading-snug focus:outline-none focus:ring-0 placeholder:text-muted-foreground/40 transition-colors ${
+                    className={`w-full bg-transparent border-0 p-0 text-lg font-heading tracking-tight leading-snug focus:outline-none focus:ring-0 placeholder:text-muted-foreground/40 transition-colors ${
                       isCompleted
                         ? "line-through text-muted-foreground/60"
                         : "text-foreground"

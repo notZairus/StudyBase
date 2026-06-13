@@ -8,6 +8,7 @@ export function useNotes() {
     queryKey: ["notes"],
     queryFn: async () => {
       const token = await getToken();
+      console.log("umauyuyyy");
 
       const res = await fetch("http://localhost:3000/api/notes", {
         method: "GET",

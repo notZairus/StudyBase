@@ -32,11 +32,11 @@ function SubjectCard() {
           </div>
         </CardHeader>
         <CardContent className="flex-1 overflow-hidden">
-          <ScrollArea className="h-40 sm:h-[calc(100dvh-30rem)] rounded-lg">
+          <ScrollArea className="h-40 sm:h-[calc(100dvh-28.5rem)] rounded-lg">
             <ScrollBar />
             <div className="space-y-2 flex flex-wrap items-start gap-x-2">
               {useSubjects().data?.length === 0 && (
-                <p className="text-muted-foreground text-center">
+                <p className="text-muted-foreground text-center w-full">
                   No subjects found!
                 </p>
               )}

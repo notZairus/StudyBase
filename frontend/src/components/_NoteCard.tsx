@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useNotes } from "../hooks/useNotes";
 import type { Note } from "../schemas/note.schema";
 import { cn } from "../lib/utils";
+import NoteItem from "./NoteItem";
 
 function NoteCard() {
   const { data: subjects } = useSubjects();
@@ -25,10 +26,10 @@ function NoteCard() {
             +
           </Button>
         </CardHeader>
-        <CardContent className="h-full pr-2 flex gap-4">
-          <div className="w-40 border-r">
+        <CardContent className="h-full pr-2 flex flex-col sm:flex-row gap-4">
+          <div className="w-fulll sm:w-40 sm:border-r ">
             <p>Subjects: </p>
-            <ScrollArea className="mt-2 pr-2 w-full h-[calc(100dvh-503px)] rounded-md">
+            <ScrollArea className="mt-2 pr-2 w-full h-[calc(100dvh-503px)]rounded-md">
               <ScrollBar />
               <div className="space-y-1 w-full">
                 <Button
@@ -44,45 +45,51 @@ function NoteCard() {
                 >
                   All
                 </Button>
-                {subjects?.map((subject) => (
-                  <Button
-                    key={subject.id}
-                    variant="outline"
-                    className={cn(
-                      "py-2 px-4 rounded-full bg-white border w-full cursor-pointer hover:bg-sidebar-accent hover:text-black",
-                      {
-                        "bg-primary font-semibold text-white hover:bg-primary hover:text-white":
-                          selectedSubject === subject.name,
-                      },
-                    )}
-                    onClick={() => setSelectedSubject(subject.name)}
-                  >
-                    {subject.name}
-                  </Button>
-                ))}
+                {subjects
+                  ?.filter((s) => s.notes.length > 0)
+                  .map((subject) => (
+                    <Button
+                      key={subject.id}
+                      variant="outline"
+                      className={cn(
+                        "py-2 px-4 rounded-full bg-white border w-full cursor-pointer hover:bg-sidebar-accent hover:text-black",
+                        {
+                          "bg-primary font-semibold text-white hover:bg-primary hover:text-white":
+                            selectedSubject === subject.name,
+                        },
+                      )}
+                      onClick={() => setSelectedSubject(subject.name)}
+                    >
+                      {subject.name}
+                    </Button>
+                  ))}
               </div>
             </ScrollArea>
           </div>
 
-          <div className="w-40 flex-1">
+          <div className="w-full sm:w-40 flex-1">
             <p>Notes: </p>
-            <ScrollArea className="mt-2 w-full h-[calc(100dvh-503px)]  rounded-md">
+            <ScrollArea className="mt-2 w-full h-40 sm:h-[calc(100dvh-503px)]  rounded-md">
               <ScrollBar />
               <div className=" w-full flex items-start flex-wrap gap-1">
+                {notes.length === 0 && (
+                  <p className="w-full text-muted-foreground text-center text-sm mt-4">
+                    No notes found.
+                  </p>
+                )}
+
                 {selectedSubject === "all" &&
                   notes?.map((note: Note) => (
-                    <div
-                      key={note.id}
-                      className="bg-white border rounded-full px-4 py-2 max-w-48"
-                    >
-                      <p>{note.title}</p>
-                      <p className="text-[12px] text-muted-foreground">
-                        {note.subjects
-                          ?.map((subject) => subject.name)
-                          .join(", ")}
-                      </p>
-                    </div>
+                    <NoteItem key={note.id} note={note} />
                   ))}
+                {selectedSubject !== "all" &&
+                  notes
+                    ?.filter((n: Note) =>
+                      n.subjects.some((s) => s.name === selectedSubject),
+                    )
+                    .map((note: Note) => (
+                      <NoteItem key={note.id} note={note} />
+                    ))}
               </div>
             </ScrollArea>
           </div>

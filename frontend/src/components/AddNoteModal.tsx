@@ -100,7 +100,7 @@ function AddNoteModal({
 
   return (
     <Dialog open={open} onOpenChange={setOpen} modal={false}>
-      <DialogContent className="sm:max-w-4xl p-0 ">
+      <DialogContent className="sm:max-w-4xl p-0 rounded-2xl overflow-hidden">
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="flex flex-col max-h-[85vh]"

@@ -1,3 +1,4 @@
+
 @import "tailwindcss";
 @import "@fontsource-variable/inter";
 @import "tw-animate-css";
@@ -5,6 +6,15 @@
 @import "@fontsource-variable/merriweather";
 
 @custom-variant dark (&:is(.dark *));
+
+ul {
+  list-style: disc;
+}
+
+ol {
+  list-style: decimal;
+}
+
 
 @layer base {
   html {
