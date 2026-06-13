@@ -261,13 +261,15 @@ function NoteShowcase({
                             className="inline-flex items-center gap-1.5 rounded-md bg-secondary text-secondary-foreground px-2 py-0.5 text-xs font-medium border border-border/40 transition-all"
                           >
                             <span>{subject}</span>
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveSubject(subject)}
-                              className="text-muted-foreground/60 hover:text-rose-500 rounded p-0.5 focus:outline-none"
-                            >
-                              <X className="size-3" />
-                            </button>
+                            {note.subjects.length > 1 && (
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveSubject(subject)}
+                                className="text-muted-foreground/60 hover:text-rose-500 rounded p-0.5 focus:outline-none"
+                              >
+                                <X className="size-3" />
+                              </button>
+                            )}
                           </span>
                         ))}
                       </div>
