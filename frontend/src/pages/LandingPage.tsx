@@ -123,10 +123,7 @@ function LandingPage() {
                   <Link to="/login">Sign in</Link>
                 </Button>
                 <Button size="lg" className="text-white" asChild>
-                  <Link to="/register">
-                    <Sparkles className="size-4" />
-                    Get started
-                  </Link>
+                  <Link to="/register">Get started</Link>
                 </Button>
               </div>
             </Show>
@@ -230,7 +227,7 @@ function LandingPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 scale-80 gap-4 rounded-[2.5rem] bg-[#f0f0f2] p-5 shadow-inner dark:bg-neutral-900/40">
+          <div className="sm:grid grid-cols-1 md:grid-cols-3 scale-80 gap-4 hidden rounded-[2.5rem] bg-[#f0f0f2] p-5 shadow-inner dark:bg-neutral-900/40">
             <div className="flex flex-col gap-4">
               <div className="flex flex-col justify-between rounded-[1.8rem] border border-black/5 bg-white p-5 shadow-sm min-h-80">
                 <div>

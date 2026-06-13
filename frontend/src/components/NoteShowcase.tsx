@@ -148,6 +148,7 @@ function NoteShowcase({
                 <DialogTitle className="sr-only">
                   {note.title || "Untitled Note"}
                 </DialogTitle>
+                <button className="absolute opacity-0"></button>
                 <Textarea
                   value={note.title}
                   onChange={(e) => emitUpdate({ title: e.target.value })}
