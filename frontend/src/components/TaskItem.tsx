@@ -51,7 +51,6 @@ const TaskItem = ({
           key={task.id}
           className={cn("w-full border-border p-2 flex-1 flex flex-col")}
         >
-          {/* name amd status */}
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 min-w-0">
               <h3

@@ -79,16 +79,13 @@ function AddSubTaskModal({
           onSubmit={handleSubmit(onSubmit)}
           className="flex flex-col max-h-[85vh]"
         >
-          {/* Header */}
           <DialogHeader className="px-6 pt-5 pb-3 border-b border-border/40 bg-muted/20">
             <DialogTitle className="text-md font-semibold tracking-tight text-foreground/90">
               Create New Subtask
             </DialogTitle>
           </DialogHeader>
 
-          {/* Form Body Context */}
           <div className="overflow-y-auto p-6 space-y-5 flex-1">
-            {/* Title Input (Frameless Document Style) */}
             <div className="space-y-1">
               <Input
                 id="name"
@@ -104,7 +101,6 @@ function AddSubTaskModal({
               )}
             </div>
 
-            {/* Description Area */}
             <div className="space-y-1">
               <Textarea
                 id="description"
@@ -120,9 +116,7 @@ function AddSubTaskModal({
               )}
             </div>
 
-            {/* Unified Metadata Shelf Attributes Block */}
             <div className="rounded-xl border border-border/60 bg-card/40 divide-y divide-border/40 text-sm overflow-hidden">
-              {/* Status Selector */}
               <div className="flex items-center justify-between p-3">
                 <Label className="text-muted-foreground font-medium text-xs">
                   Status
@@ -151,7 +145,6 @@ function AddSubTaskModal({
                 </Select>
               </div>
 
-              {/* Priority Dropdown */}
               <div className="flex items-center justify-between p-3">
                 <Label className="text-muted-foreground font-medium text-xs">
                   Priority
@@ -182,7 +175,6 @@ function AddSubTaskModal({
             </div>
           </div>
 
-          {/* Sticky Lower Control Bar */}
           <div className="flex justify-end gap-2 px-6 py-4 border-t border-border/40 bg-muted/10 shrink-0">
             <Button
               type="button"

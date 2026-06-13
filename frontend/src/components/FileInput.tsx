@@ -70,10 +70,8 @@ export function DocumentUploader({
   }, [fileName, error, fileInputRef]);
 
   return (
-    <div className="space">
-      <p className="text-xs leading-4 mb-2 text-center">
-        Extract Text <br /> From Document:
-      </p>
+    <div className="space-y-2">
+      <p className="text-xs leading-4 mb-2 text-center"></p>
       <div
         className={cn(
           "border-2 border-dashed rounded-lg p-2 text-center max-w-32",
@@ -100,9 +98,7 @@ export function DocumentUploader({
           </div>
         ) : (
           <p className="text-muted-foreground w-full text-xs">
-            Click to upload or drag and drop
-            <br />
-            PDF, DOC up to 10MB
+            Extract a text fromPDF, DOC up to 10MB
           </p>
         )}
       </div>

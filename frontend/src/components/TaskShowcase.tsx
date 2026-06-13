@@ -149,7 +149,6 @@ const TaskShowcase = ({ open = false, setOpen, taskId }: TaskShowcaseProps) => {
         parentId={task.id}
       />
 
-      {/* Confirmation Dialog for Deletion */}
       <Dialog
         open={openConfirmDelete}
         onOpenChange={setOpenConfirmDelete}
@@ -184,14 +183,12 @@ const TaskShowcase = ({ open = false, setOpen, taskId }: TaskShowcaseProps) => {
         </DialogContent>
       </Dialog>
 
-      {/* Main Showcase Dialog */}
       <Dialog open={open} onOpenChange={setOpen} modal={false}>
         <DialogContent
           className="sm:max-w-lg p-0 overflow-hidden gap-0 rounded-2xl border bg-background shadow-xl animate-in fade-in-50 duration-200"
           showCloseButton={false}
         >
           <div className="p-6 space-y-6">
-            {/* Main Task Header - Editable Input & Trash Action */}
             <div className="flex items-center gap-3.5  justify-between">
               <div className="flex items-center gap-3.5 flex-1 min-w-0">
                 <button
@@ -227,7 +224,6 @@ const TaskShowcase = ({ open = false, setOpen, taskId }: TaskShowcaseProps) => {
                 </div>
               </div>
 
-              {/* Actionable Delete Button */}
               <button
                 onClick={() => setOpenConfirmDelete(true)}
                 className="p-1.5 my-1 rounded-lg text-muted-foreground/60 hover:text-destructive hover:bg-destructive/10 dark:hover:bg-destructive/20 transition-all focus:outline-none active:scale-95 shrink-0"
@@ -237,7 +233,6 @@ const TaskShowcase = ({ open = false, setOpen, taskId }: TaskShowcaseProps) => {
               </button>
             </div>
 
-            {/* Description Block - Editable Textarea */}
             <div className="relative bg-muted/20 rounded-xl border border-border/60 focus-within:border-muted-foreground/30 focus-within:bg-muted/30 transition-all">
               <textarea
                 value={taskCopy.description || ""}
@@ -253,9 +248,7 @@ const TaskShowcase = ({ open = false, setOpen, taskId }: TaskShowcaseProps) => {
               />
             </div>
 
-            {/* Metadata Panel */}
             <div className="rounded-xl border border-border/60 bg-card/50 divide-y divide-border/40 text-sm">
-              {/* Priority Selector Row */}
               <div className="flex items-center justify-between p-3.5">
                 <span className="text-muted-foreground font-medium text-xs">
                   Priority
@@ -300,7 +293,6 @@ const TaskShowcase = ({ open = false, setOpen, taskId }: TaskShowcaseProps) => {
                 </DropdownMenu>
               </div>
 
-              {/* Due Date Picker Row */}
               <div className="flex items-center justify-between p-3.5">
                 <span className="text-muted-foreground font-medium text-xs">
                   Due Date
@@ -364,7 +356,6 @@ const TaskShowcase = ({ open = false, setOpen, taskId }: TaskShowcaseProps) => {
                 </Popover>
               </div>
 
-              {/* Subjects Tag Management Row */}
               <div className="flex items-start justify-between p-3.5 gap-4">
                 <span className="text-muted-foreground font-medium text-xs pt-1.5 flex items-center gap-1.5">
                   <Tag className="size-3 text-muted-foreground/70" />
@@ -426,7 +417,6 @@ const TaskShowcase = ({ open = false, setOpen, taskId }: TaskShowcaseProps) => {
               </div>
             </div>
 
-            {/* Subtasks Section */}
             <div className="space-y-2.5">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">

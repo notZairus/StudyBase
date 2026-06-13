@@ -81,7 +81,6 @@ function TaskItemLong({ task }: { task: Task }) {
               {task.name}
             </span>
 
-            {/* Deadline Placeholder */}
             <div className="flex items-center gap-1 mt-0.5">
               <span className="text-[10px] uppercase font-medium text-muted-foreground/60 tracking-wider">
                 {deadlineFormatter.format(new Date(task.deadline as string))}
@@ -90,7 +89,6 @@ function TaskItemLong({ task }: { task: Task }) {
           </div>
         </div>
 
-        {/* Priority Indicator */}
         <div className="flex items-center gap-2 shrink-0 pl-1">
           <span
             className={`size-1.5 rounded-full ${taskConfig.dot}`}

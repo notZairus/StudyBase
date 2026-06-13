@@ -73,7 +73,6 @@ const SubjectShowcase = ({
     <>
       <AddTaskModal open={openAddTaskModal} setOpen={setOpenAddTaskModal} />
 
-      {/* Confirmation Dialog for Deletion */}
       <Dialog open={openConfirmDelete} onOpenChange={setOpenConfirmDelete}>
         <DialogContent className="sm:max-w-md p-6 rounded-2xl border bg-background shadow-xl">
           <DialogTitle className="text-lg font-semibold tracking-tight">
@@ -106,14 +105,12 @@ const SubjectShowcase = ({
         </DialogContent>
       </Dialog>
 
-      {/* Main Showcase Dialog */}
       <Dialog open={open} onOpenChange={setOpen} modal={false}>
         <DialogContent
           className="sm:max-w-xl p-0 overflow-hidden gap-0 rounded-2xl border bg-background shadow-xl animate-in fade-in-50 duration-200"
           showCloseButton={false}
         >
           <div className="p-6 space-y-6">
-            {/* Main Header - Editable Input & Trash Action */}
             <div className="flex items-center gap-3.5 justify-between">
               <div className="flex items-center gap-3.5 flex-1 min-w-0">
                 <div className="flex-1">
@@ -138,7 +135,6 @@ const SubjectShowcase = ({
                 </div>
               </div>
 
-              {/* Actionable Delete Button */}
               <button
                 onClick={() => setOpenConfirmDelete(true)}
                 className="p-1.5 my-1 rounded-lg text-muted-foreground/60 hover:text-destructive hover:bg-destructive/10 dark:hover:bg-destructive/20 transition-all focus:outline-none active:scale-95 shrink-0"
@@ -148,7 +144,6 @@ const SubjectShowcase = ({
               </button>
             </div>
 
-            {/* Tasks Section (Mirrors Subtasks Layout) */}
             <div className="space-y-2.5">
               <div className="flex items-center justify-between w-full">
                 <div className="flex items-center gap-2">
